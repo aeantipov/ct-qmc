@@ -1,0 +1,12 @@
+#summary ct-qmc
+#labels ct-qmc,Featured
+
+= Introduction =
+
+Ct-qmc is a weak-coupling QMC made in real time axis.
+
+
+= Details =
+
+  * C++
+  * Rather fast
