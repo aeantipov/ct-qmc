@@ -1,18 +1,9 @@
 # Project: ctqmc
 
-#CPP = g++ -O3 -Wall -ansi -pedantic
-CC = g++ -O3 -Wall -Wno-non-virtual-dtor -ansi -pedantic 
-#CC = g++-4.1.2 -O3 
 #-Wno-non-template-friend
-CPP= g++-4.1.2 -O3 -Wno-non-template-friend
-#CPP = icpc -O3 -Wall -Wno-non-virtual-dtor -ansi -pedantic
+CPP= g++ -O3 -Wno-non-template-friend -Wno-write-strings
 #NORB= -Dorb1
 #NORB= -Dorb2
-CFLAGS = $(INCS)
-
-CTQMC_PATH=./ct-qmc/splitting10
-
-CXXFLAGS = $(CXXINCS)
 
 PART= -Dorb1
 #Determines how many particles do we have
@@ -20,13 +11,18 @@ PART= -Dorb1
 ZONE= -Dzone4
 #Determines how many zones do we have
 
-all: ct-qmc
+CFLAGS = $(PART) $(ZONE)
 
-ct-qmc: ct-qmc.cpp
-	$(CPP) ct-qmc.cpp $(PART) $(ZONE)  -o ct-qmc
+default: ct-qmc
+
+ct-qmc: ct-qmc.cpp ../main.cpp ../ini.cpp
+	$(CPP) $(CFLAGS) ct-qmc.cpp -o ct-qmc
+
+change : ../change.cpp
+	$(CPP) ../change.cpp -o ../change
 
 clean:
-	${RM} $(OBJ) $(BIN) $(DBIN) $(BBIN) ct-qmc ../change *.o
+	${RM} ct-qmc *.o
 
 cleandata:
 	cp _input.dat _input.dat.backup
