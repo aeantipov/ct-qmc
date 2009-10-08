@@ -1,3 +1,4 @@
+extern default_dict internal_input;
 int alphaW_number=int_value("maximum_MC_steps");
 n_type desired_accuracy=value("desired_accuracy");
 #include "g_recalc.cpp"

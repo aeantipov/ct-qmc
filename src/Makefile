@@ -2,20 +2,18 @@
 
 #-Wno-non-template-friend
 CPP= g++ -O3 -Wno-non-template-friend -Wno-write-strings
-#NORB= -Dorb1
-#NORB= -Dorb2
 
 PART= -Dorb1
 #Determines how many particles do we have
 
-ZONE= -Dzone4
+ZONE= -Dzone1
 #Determines how many zones do we have
 
 CFLAGS = $(PART) $(ZONE)
 
 default: ct-qmc
 
-ct-qmc: ct-qmc.cpp ../main.cpp ../ini.cpp
+ct-qmc: ct-qmc.cpp ../main.cpp ../ini.cpp ../default.h
 	$(CPP) $(CFLAGS) ct-qmc.cpp -o ct-qmc
 
 change : ../change.cpp
