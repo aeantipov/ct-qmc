@@ -6,6 +6,8 @@ int const N_max=5000;   //maximal perturbation order
 
 int main_argc;  char * main_argv[256];
 
+default_dict internal_input; // class for default input values
+
 			//classes for operators
 struct point {n_type t; int i; int z;   //creation operator position
 point (){i=0; t=0; z=0;}
@@ -32,9 +34,6 @@ double to0(n_type x)
 	if (fabs(x)<f) return 0;
 	return double (x);	
 ;}
-
-
-
 
 
 

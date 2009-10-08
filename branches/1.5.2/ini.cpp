@@ -1,7 +1,11 @@
 
+extern default_dict internal_input;
+
 void Ini()
 {
-	cout<<"\n       This is CT-QMC code version 1.5RC1.1\n       Check www.ct-qmc.ru for latest updates.\n";
+	cout<<"\n       This is CT-QMC code version 1.5.2\n       Check www.ct-qmc.org for latest updates.\n";
+	
+
    for (int ll=0;ll<N_max;ll++){point p0(0,0,0); p[ll]=p0; point_ p0_(0,0,0); p_[ll]=p0_;}
 	mu1_Gt=new n_type * [n_zone]; {for (int i=0; i<n_zone; i++) mu1_Gt[i]=new n_type [n_part];}
 	mu2_Gt=new n_type * [n_zone]; {for (int i=0; i<n_zone; i++) mu2_Gt[i]=new n_type [n_part];}   
