@@ -2,9 +2,12 @@
 #include "input.cpp"
 
 
+
 int const N_max=5000;   //maximal perturbation order
 
 int main_argc;  char * main_argv[256];
+
+default_dict internal_input; // class for default input values
 
 			//classes for operators
 struct point {n_type t; int i; int z;   //creation operator position
@@ -36,17 +39,13 @@ double to0(n_type x)
 
 
 
-
-
-
 int n_tau=int_value("N_tau"), WN_max=int_value("number_of_Matsubara_frequencies")+2;
       	//n_tau - auxiliary number; number of points in t-direction
       	//for spline creation
 
 
 //small things
-n_type Pi=4.*atan(n_type(1.0));
-complex I(0,1);
+
 
 void read_Delta();
 void Import_Interaction (point &, point_ &, point &, point_ &, n_type &, n_type &, n_type &);

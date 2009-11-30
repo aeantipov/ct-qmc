@@ -5,44 +5,28 @@
 #include <cstdlib>
 #include <cstring>
 
-using namespace std;
-#define complex complex<n_type>
 
+#include "config.h"
+#include "default.h"
+
+
+#ifdef use_mpi
+#include "minictqmcworld.h"
+static CTQMC_TAG FINISH_MESSAGE=5744;
+#endif
+
+extern default_dict internal_input;
 
 //===================file input ======================
 
-char input_values [255]="_input.dat", default_input [255]="..//input.dat";
-
+char input_values [255]="_input.dat";
 
 int MAX_NUMBER_OF_VARS=2000, MAX_NUMBER_OF_COMMENT_CHARS=10000;
 
 n_type value_(char* name, int index=0)
 {
-
-   char x [255];
-	ifstream inf(default_input);
-   int f, count=0;
-   do
-   {
-   	int g=0; do {inf>>x;g++;} while (x[0]!='$' && g<MAX_NUMBER_OF_COMMENT_CHARS);
-
-      {for (int i=0; x[i]!=0 && i<1000; i++) {x[i]=x[i+1]; if (x[i]=='$') {x[i]=0; x[i+1]=0;};};}
-      f=1; int i=-1;
-      do
-      	{i++; if (x[i]!=name[i]) f=0;}
-      while (x[i]!=0 && name[i]!=0 && i<255 && f==1);
-      count++;
-      if (g==MAX_NUMBER_OF_COMMENT_CHARS) count=MAX_NUMBER_OF_VARS; //EOF
-   ;}
-   while (f==0 && count<MAX_NUMBER_OF_VARS);
-
-   if (count==MAX_NUMBER_OF_VARS)
-   {
-   	cout<<"NO INPUT VARIABLE FOR THE VARIABLE \""<<name<<"\"\n";
-   	return 0;
-   ;}
-   n_type r;  for(int i=0; i<index+1; i++) inf>>r; return r;
-;}
+  return internal_input.value(name);
+}
 
 n_type value(char* name, int index=0)
 {
@@ -75,29 +59,8 @@ n_type value(char* name, int index=0)
 
 int int_value_(char* name, int index=0)
 {
-
-   char x [255];
-	ifstream inf(default_input);
-   int f, count=0;
-   do
-   {
-   	int g=0; do {inf>>x;g++;} while (x[0]!='$' && g<MAX_NUMBER_OF_COMMENT_CHARS);
-      {for (int i=0; x[i]!=0 && i<1000; i++) {x[i]=x[i+1]; if (x[i]=='$') {x[i]=0; x[i+1]=0;};};}
-      f=1; int i=-1;
-      do
-      	{i++; if (x[i]!=name[i]) f=0;}
-      while (x[i]!=0 && name[i]!=0 && i<255 && f==1);
-      count++;
-      if (g==MAX_NUMBER_OF_COMMENT_CHARS) count=MAX_NUMBER_OF_VARS; //EOF
-   ;}
-   while (f==0 && count<MAX_NUMBER_OF_VARS);
-
-   if (count==MAX_NUMBER_OF_VARS)
-   {cout<<"NO INPUT VARIABLE FOR THE VARIABLE \""<<name<<"\"\n"; return 0;}
-   int r;  for(int i=0; i<index+1; i++) inf>>r; return r;
-
-;}
-
+  return internal_input.int_value(name);
+}
 
 int int_value(char* name, int index=0)
 {
@@ -124,7 +87,6 @@ int int_value(char* name, int index=0)
    int r=3; for(int i=0; i<index+1; i++) inf>>r; return r;
 
 ;}
-
 
 
 void change_parameter(char *argv, n_type val)
@@ -158,8 +120,6 @@ void change_parameter(char *argv, n_type val)
          	break;
          ;}
       ;}
-
-//      cout<<i1<<"  "<<i2;
 
 
       ofstream ou("_input.dat",ios::binary);

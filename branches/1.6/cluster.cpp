@@ -7,13 +7,13 @@ int cluster_curr_size;
 int cluster_nz [n_zone];
 
 n_type ** cluster_M[n_zone], ** cluster_M0[n_zone];
-complex ** cluster_gM[n_zone], ** cluster_Mg[n_zone];
-complex ** cluster_gM0[n_zone], ** cluster_M0g[n_zone];
+ComplexType ** cluster_gM[n_zone], ** cluster_Mg[n_zone];
+ComplexType ** cluster_gM0[n_zone], ** cluster_M0g[n_zone];
 int * cluster_state; int * cluster_state_z[n_zone];
 int * cluster_z1, * cluster_z2, * cluster_k1, * cluster_k2;
 int * cluster_KM1, *cluster_KM2, *cluster_KN;
 n_type * cluster_u; int * cluster_wl;
-complex ** cluster_Gmatr[n_zone];
+ComplexType ** cluster_Gmatr[n_zone];
 
 
 
@@ -53,23 +53,23 @@ void cluster_ini() //memory alloc.
 	      cluster_M[z][k]=new n_type [2*cluster_size];
    	   cluster_M0[z][k]=new n_type [2*cluster_size];
       ;}
-      cluster_Mg[z]=new complex * [2*cluster_size];
-      cluster_M0g[z]=new complex * [2*cluster_size];
+      cluster_Mg[z]=new ComplexType * [2*cluster_size];
+      cluster_M0g[z]=new ComplexType * [2*cluster_size];
       for (int k1=0; k1<2*cluster_size; k1++)
       {
-      	cluster_Mg[z][k1]=new complex [n_part];
-         cluster_M0g[z][k1]=new complex [n_part];
+      	cluster_Mg[z][k1]=new ComplexType [n_part];
+         cluster_M0g[z][k1]=new ComplexType [n_part];
       ;}
-      cluster_gM[z]=new complex * [n_part];
-      cluster_gM0[z]=new complex * [n_part];
+      cluster_gM[z]=new ComplexType * [n_part];
+      cluster_gM0[z]=new ComplexType * [n_part];
       for (int k2=0; k2<n_part; k2++)
       {
-      	cluster_gM[z][k2]=new complex [2*cluster_size];
-         cluster_gM0[z][k2]=new complex [2*cluster_size];
+      	cluster_gM[z][k2]=new ComplexType [2*cluster_size];
+         cluster_gM0[z][k2]=new ComplexType [2*cluster_size];
       ;}
-   	cluster_Gmatr[z]=new complex * [n_part];
+   	cluster_Gmatr[z]=new ComplexType * [n_part];
  	   for (int q=0; q<n_part; q++)
-   	cluster_Gmatr[z][q]=new complex[n_part];
+   	cluster_Gmatr[z][q]=new ComplexType[n_part];
 
    ;}
    cluster_state=new int [cluster_size];

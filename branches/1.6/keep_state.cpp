@@ -10,11 +10,11 @@ void keep_state_all(int f, int keep_ewt=1) //f==0 => keep, f==1 => recover
 	static point p0[N_max]; static point_ p0_[N_max];
    static n_type u0[N_max], a0[N_max];
    static int wl0[N_max];
-   static complex * ewt0[N_max], *ewt0_[N_max];
-   static complex * ewt00[N_max], *ewt00_[N_max];  //no memory 2b allocated for these arrays...
+   static ComplexType * ewt0[N_max], *ewt0_[N_max];
+   static ComplexType * ewt00[N_max], *ewt00_[N_max];  //no memory 2b allocated for these arrays...
    static int ewt_kept;
    static n_type **M0[n_zone];
-   static complex *** GM_matrix0[n_zone];
+   static ComplexType *** GM_matrix0[n_zone];
 
 
 
@@ -29,16 +29,16 @@ void keep_state_all(int f, int keep_ewt=1) //f==0 => keep, f==1 => recover
       	for (int j=0; j<N_max/3; j++)
       		M0[z][j]=new n_type [N_max];
 
-   	GM_matrix0[z]=new complex **[wn_max];
+   	GM_matrix0[z]=new ComplexType **[wn_max];
    	for (int w=0; w<wn_max; w++)
    	{
-   	  GM_matrix0[z][w]=new complex *[n_part];
+   	  GM_matrix0[z][w]=new ComplexType *[n_part];
          for (int n1=0; n1<n_part; n1++)
-         	GM_matrix0[z][w][n1]=new complex [n_part];
+         	GM_matrix0[z][w][n1]=new ComplexType [n_part];
    	  ;}
 
    	;}
-      for (int i=0; i<N_max; i++){ewt0[i]=new complex [wn_max]; ewt0_[i]=new complex [wn_max];}
+      for (int i=0; i<N_max; i++){ewt0[i]=new ComplexType [wn_max]; ewt0_[i]=new ComplexType [wn_max];}
       m=1;
    ;}
 
@@ -50,7 +50,7 @@ void keep_state_all(int f, int keep_ewt=1) //f==0 => keep, f==1 => recover
 
       {
       for (int i=0; i<Nc; i++) {p0[i]=p[i]; p0_[i]=p_[i]; a0[i]=a[i]; u0[i]=u[i]; wl0[i]=wl[i];}
-       														 // memcpy(ewt0[i],ewt[i],wn_max*sizeof(complex));   memcpy(ewt0_[i],ewt_[i],wn_max*sizeof(complex));
+       														 // memcpy(ewt0[i],ewt[i],wn_max*sizeof(ComplexType));   memcpy(ewt0_[i],ewt_[i],wn_max*sizeof(ComplexType));
       ewt_kept=0;
       if (keep_ewt==1)
          {
