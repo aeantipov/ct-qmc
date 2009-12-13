@@ -1,3 +1,4 @@
+extern default_dict internal_input;
 int alphaW_number=int_value("maximum_MC_steps");
 n_type desired_accuracy=value("desired_accuracy");
 #include "g_recalc.cpp"
@@ -19,8 +20,8 @@ point p[N_max]; point_ p_[N_max]; n_type u[N_max], a[N_max]; int wl[N_max];
 
 int curr_sgn=1;
 n_type ** M [n_zone];
-complex * ewt[N_max], * ewt_[N_max];
-complex *** GM_matrix[n_zone];
+ComplexType * ewt[N_max], * ewt_[N_max];
+ComplexType *** GM_matrix[n_zone];
 		   //modified by low-level functions from moves.cpp, re-calculated by from_scratch()
 
 			//!!!  ALL global variables are also stored-restored by keep_state() !!!
@@ -29,7 +30,7 @@ int WL_flag=int_value("use_Wang_Landau"), WL_max;
 n_type WL_factor, WL_weight[N_max]; ifstream WL_stream("WL.dat"); ofstream WL_out("WL1.dat");
 			//defined in ini and remains unchanged so far...
 
-complex ** GM00_st[n_zone]; complex *** Gtotal_st [n_zone];//[WN_max][n_part];
+ComplexType ** GM00_st[n_zone]; ComplexType *** Gtotal_st [n_zone];//[WN_max][n_part];
 
 n_type sgn_sum=0, weight_sum=0, weight_sum2=0, Nc_sum=0, DispG0_sum=0;
 			//statistics
@@ -97,8 +98,6 @@ int main ()
 
    Ini();
 
-
-
    n_type s=0; int ii=0, ti=time(NULL);
    {ofstream st("stop.dat"); st<<2<<flush;}
 
@@ -149,7 +148,7 @@ if ( (i%output_period==0 && i!=0 && curr_t!=time(NULL)/output_period_time) || (i
             ;}
 
 //Green function (Gw.dat, Gt.dat, Gw_complete.dat, Sigma.dat)
-            complex ggg=0;
+            ComplexType ggg=0;
             {
             	ofstream ou_gg("Gw.dat"), ou_total("Gw_complete.dat");
                for (int wn=0; wn<wn_max; wn++)
@@ -178,7 +177,7 @@ if ( (i%output_period==0 && i!=0 && curr_t!=time(NULL)/output_period_time) || (i
                for (int z=0; z<n_zone; z++)
                for (int j=0; j<n_part; j++)
                {
-                  complex g=GM00_st[z][wn][j]/weight_sum, g0=(*Grot(z,wn,0)).x[j][j];
+                  ComplexType g=GM00_st[z][wn][j]/weight_sum, g0=(*Grot(z,wn,0)).x[j][j];
                	Sigma_str<<double(real(1./g0-1./g))<<"  "<<double(imag(1./g0-1./g))<<"  ";
                ;}
                Sigma_str<<"\n";

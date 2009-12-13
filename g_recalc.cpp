@@ -1,4 +1,7 @@
 //=================== effective g0 are calculated here ===========================
+#ifdef use_mpi
+extern CTQMC_WORLD CTQMC;
+#endif
 
 Matrix & Rotate (int); //the body is in input.cpp
 
@@ -16,14 +19,19 @@ Matrix & alpha_W(int z)
    	{for (int i0=0; i0<n_zone; i0++)
     		{aW[i0].new_memory(); aW[i0]=0;}
       ;}
-      int t=time(NULL); cout<<"\nalpha_W data accumulation ..."<<flush;
+      int t=time(NULL);
+      #ifdef use_mpi
+      CTQMC.getStream()<<"\nalpha_W data accumulation ..."<<flush;
+      #else
+      cout<<"\nalpha_W data accumulation ..."<<flush;
+      #endif
       point r1, r2; point_ r1_, r2_; n_type u_disp=0, u, a1, a2;
       for (int i=0; i<NNN; i++)
       {
       	W(r1, r1_, r2, r2_, u, a1, a2);
-         (aW[r1.z]).x[r1.i][r1_.i]+=complex(a2*u/(beta*NNN));
+         (aW[r1.z]).x[r1.i][r1_.i]+=ComplexType(a2*u/(beta*NNN));
          if (r1.i==r1_.i) (aW[r1.z]).x[r1.i][r1_.i]-=n_aver*u/(beta*NNN);
-         (aW[r2.z]).x[r2.i][r2_.i]+=complex(a1*u/(beta*NNN));
+         (aW[r2.z]).x[r2.i][r2_.i]+=ComplexType(a1*u/(beta*NNN));
          if (r2.i==r2_.i) (aW[r2.z]).x[r2.i][r2_.i]-=n_aver*u/(beta*NNN);
          u_disp+=sqr(u/(beta*NNN));
 
@@ -33,13 +41,21 @@ Matrix & alpha_W(int z)
       		{for (int i0=0; i0<n_zone; i0++) s+=norm2(aW[i0]);}
          	if (s<u_disp*30)
             {
+      		#ifdef use_mpi
+            	CTQMC.getStream()<<"\nforced no correction to G0\n";
+		#else
             	cout<<"\nforced no correction to G0\n";
+		#endif
             	{for (int i0=0; i0<n_zone; i0++) aW[i0]=0;}
                break;
             ;}
          ;}
       ;}
+      #ifdef use_mpi
+      CTQMC.getStream()<<" done in "<<time(NULL)-t<<" sec.\n"<<flush;
+      #else
       cout<<" done in "<<time(NULL)-t<<" sec.\n"<<flush;
+      #endif
       f=1;
 
 //      if (norm2(aW[0]-aW[1])<1e-4) {Matrix a=0.5*(aW[0]+aW[1]); aW[0]=a; aW[1]=a; cout<<"alpha_W symmetrized\n"<<flush;}

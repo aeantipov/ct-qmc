@@ -5,7 +5,7 @@ typedef double n_type; //accuracy
 #include "headers.cpp"
 
 n_type beta=value("beta");
-n_type mu1_Gt, mu2_Gt;    complex * GM00_st;
+n_type mu1_Gt, mu2_Gt;    ComplexType * GM00_st;
 
 
 
@@ -74,10 +74,10 @@ void Gt_write()
 
 int main (int argc, char *argv[])
 {
-	GM00_st=new complex [wn_max+1];
+	GM00_st=new ComplexType [wn_max+1];
    ifstream inp(argv[1]);
    for (int wn=0; wn<wn_max; wn++)
-   	{n_type x,y=0;  inp>>x;  inp>>y; GM00_st[wn]=complex(x,y);}
+   	{n_type x,y=0;  inp>>x;  inp>>y; GM00_st[wn]=ComplexType(x,y);}
    Gt_write();
 	return 1;
 ;}

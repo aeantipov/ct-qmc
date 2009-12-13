@@ -1,50 +1,52 @@
+DMFT procedure for a half-filled Bethe lattice
+The self-consistent DMFT loop is
 
-$expected_dn$
-0.95
-
-$Delta$
-0.258626
-
-$expected_occupancy$
-0.25
+\cal{G}^{-1}(i w)=i w+\mu - t^2 G(i w)
+S=-\sum_ {iw} c^{\dag} \cal{G}^{-1} c + \int d\tau U (n_{up}-1/2)
+(n_{down}-1/2)
 
 $mu$
--0.441234
+0
 
+$Delta$
+0
 
 $U$
-1.2
+1.0
 Coulomb repulsion
 
 $beta$
-20
+30
 inverse temperature
 
-$maximum_MC_steps$
-100000000
+$DOS_halfwidth$
+0.00001
+Radius of the semicircle for the initial DOS
 
-$WL_factor$
-4
+coupling at Bethe lattice
 
 $read_delta$
-2
+0
+whether to read self-energy from the external file
+Possible values
+   0: do not read
+   1: read from file "Delta.dat" the same self-energy for all zones
+   2: read from file "Delta.dat" different self-energies for different zones
 
-$coupling$
-0.3
 
+$desired_accuracy$
+0.03
+desired errorbar in G(\tau)
 
 $Use_Global_moves$
 1
 
-
-
 $use_Wang_Landau$
 0
 
-$desired_accuracy$
-0.001
+$number_of_Matsubara_frequencies$
+50
 
 
-$alpha$
--0.03
+
 

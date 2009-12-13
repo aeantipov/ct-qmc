@@ -30,7 +30,6 @@ typedef double n_type; //accuracy
 int const n_zone=n_zone_; 
 
 int const n_part=n_part_;
-//int const n_zone=2; int n_part=1;
 #include "..//headers.cpp"
 			//standard headers are included
 			//some starting things are declared
@@ -74,5 +73,11 @@ void W(point & r1, point_ & r1_, point & r2, point_ & r2_, n_type &u, n_type & a
 
 
 
+#ifdef use_mpi
+#include "..//main_mpi.cpp"
+#else
+
 #include "..//main.cpp"
+#endif
+
 

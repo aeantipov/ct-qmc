@@ -1,6 +1,6 @@
  //optical susceptibility: n(0) n(tau)
 
- complex * nn_w_data, * ss_w_data, * G_nn11, * G_nn22,* G_nn21,* G_nn12; n_type nn_sum=0;
+ ComplexType * nn_w_data, * ss_w_data, * G_nn11, * G_nn22,* G_nn21,* G_nn12; n_type nn_sum=0;
 
 // ofstream debug("debug.dat");
 
@@ -8,8 +8,8 @@
  {//debug<<nn_sum<<"\n"<<flush;
  static int wc_max=int_value("number_of_Matsubara_frequencies_for_Gamma4");
  if (fabs(nn_sum)<1e-8) return;
-   static complex * nn_w =new complex [wc_max/2];
-   static complex * ss_w =new complex [wc_max/2];
+   static ComplexType * nn_w =new ComplexType [wc_max/2];
+   static ComplexType * ss_w =new ComplexType [wc_max/2];
    {for (int WNN=0; WNN<wc_max/2; WNN++) {nn_w[WNN]=nn_w_data[WNN]/nn_sum;ss_w[WNN]=ss_w_data[WNN]/nn_sum;};}
 
  	ofstream nnw_str("nnw.dat"), nntau_str("nntau.dat");
@@ -49,15 +49,15 @@ void update_nn()
 
 static int wc_max=int_value("number_of_Matsubara_frequencies_for_Gamma4");
    ini_GMchi();
-   static int count=0; count++; if (count%(wc_max/2)!=0) return;  //to mantain N^2 complexity
+   static int count=0; count++; if (count%(wc_max/2)!=0) return;  //to mantain N^2 ComplexTypeity
 
 
 
    {
    	static int f=0;   if (f==0)
       {
-      	nn_w_data=new complex [wc_max]; ss_w_data=new complex [wc_max]; f=1;
-         G_nn11=new complex [wc_max]; G_nn22=new complex [wc_max]; G_nn12=new complex [wc_max]; G_nn21=new complex [wc_max];
+      	nn_w_data=new ComplexType [wc_max]; ss_w_data=new ComplexType [wc_max]; f=1;
+         G_nn11=new ComplexType [wc_max]; G_nn22=new ComplexType [wc_max]; G_nn12=new ComplexType [wc_max]; G_nn21=new ComplexType [wc_max];
          {for (int i=0; i<wc_max/2;i++) {nn_w_data[i]=0.;ss_w_data[i]=0.;G_nn11[i]=0;G_nn22[i]=0;G_nn12[i]=0;G_nn21[i]=0;};}
 
 
@@ -80,7 +80,7 @@ for (int WNN=0;WNN<wc_max/2;WNN++)
 {
    //G_11 G_22
    {
-   	complex s=0, s1=0, s2=0;
+   	ComplexType s=0, s1=0, s2=0;
       if (WNN==0)
       {
       	s1=real(GMchi_matrix[z1][0][0][n1][n1]), s2=real(GMchi_matrix[z2][0][0][n2][n2]);
@@ -99,7 +99,7 @@ for (int WNN=0;WNN<wc_max/2;WNN++)
    //G_12 G_21
    if (z1==z2)
    {
-   	complex s12=0;
+   	ComplexType s12=0;
    	if (n1==n2) s12=real(GMchi_matrix[z1][0][0][n1][n1])/wc_max;
    	for (int w1=0; w1<2*wc_max/2; w1++)        //????? indices
       for (int w2_=0; w2_<2*wc_max/2; w2_++)
@@ -107,7 +107,7 @@ for (int WNN=0;WNN<wc_max/2;WNN++)
    ;}
    else
    {
-   	complex s1=real(GMchi_matrix[z1][0][0][n1][n1]), s2=real(GMchi_matrix[z2][0][0][n2][n2]);
+   	ComplexType s1=real(GMchi_matrix[z1][0][0][n1][n1]), s2=real(GMchi_matrix[z2][0][0][n2][n2]);
    	for (int w1=0; w1<2*wc_max/2; w1++)
       for (int w2_=0; w2_<2*wc_max/2; w2_++)     //????? indices
       {

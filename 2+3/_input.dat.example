@@ -1,0 +1,33 @@
+$beta$
+20
+
+$U$
+2.0
+
+$J$
+0.17
+
+$desired_accuracy$
+-1
+
+$maximum_MC_steps$
+30000000
+
+$read_delta$
+0
+
+
+$use_Wang_Landau$
+0
+
+$Use_Global_moves$
+1
+
+$W_group_generators$
+0
+Program works correctly with Use_Global_moves=1 and W_group_generators=0 only if the
+interaction is spin-indepent. Bee careful!
+
+
+$Enable_cluster_updates$
+1

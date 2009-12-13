@@ -38,7 +38,7 @@ void read_Delta()
            	n_type er=0, ei=0;
             if (read_delta==1) {delta >>er; delta >>ei;}
 
-            (Delta[z][wn]).x[i][i]=complex(er,ei);
+            (Delta[z][wn]).x[i][i]=ComplexType(er,ei);
 
          ;}
       ;}
@@ -60,7 +60,7 @@ void read_Delta()
          for (int j=0; j<n_part; j++)
          {
          	n_type er=0, ei=0; delta>>er; delta>>ei;
-            (Delta[z][wn]).x[i][j]=complex(er,ei);          //cout<<(Delta[z][wn]).x[i][j]<<"  ";
+            (Delta[z][wn]).x[i][j]=ComplexType(er,ei);          //cout<<(Delta[z][wn]).x[i][j]<<"  ";
          ;} //cout<<"\n";
 ;}
 

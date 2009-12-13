@@ -1,18 +1,18 @@
 //=================================== weight =========================================
 
 
-complex G_ww(int , int);
+ComplexType G_ww(int , int);
 //ofstream corr("corr.dat");
 
 n_type weight()
 {
-	static complex * g0[n_zone];
+	static ComplexType * g0[n_zone];
    static int f=0;
    if (f==0)
    {
       for (int z=0; z<n_zone; z++)
       {
-      	g0[z]=new complex[n_part];
+      	g0[z]=new ComplexType[n_part];
 	   	for (int j=0; j<n_part; j++)
       	{
          	Matrix l=Rotate(z), r(l); r.trans();
@@ -28,7 +28,7 @@ n_type weight()
    for (int z=0; z<n_zone; z++)
    for (int j=0; j<n_part; j++)
    {
-   	complex y=GM_matrix[z][0][j][j]-g0[z][j];//GM00[z][w][j]-g0[z][w][j];
+   	ComplexType y=GM_matrix[z][0][j][j]-g0[z][j];//GM00[z][w][j]-g0[z][w][j];
    	x+=sqr(real(y))+sqr(imag(y));
    ;}
 
@@ -41,7 +41,7 @@ if (RR!=0)
 	for (int n1=0; n1<n_part; n1++)
 	for (int n2=0; n2<n_part; n2++)
 	{
-   		complex y=GM_matrix[z1][0][n1][n1]*GM_matrix[z2][0][n2][n2];
+   		ComplexType y=GM_matrix[z1][0][n1][n1]*GM_matrix[z2][0][n2][n2];
    		x+=sqr(real(y))+sqr(imag(y));
 	;}
    ;}
@@ -56,7 +56,7 @@ if (NN!=0 && RR==0)
 	static int z1=int_value("nn_zone1");
 	static int z2=int_value("nn_zone2");
 	
-	complex y=GM_matrix[z1][0][n1][n1]*GM_matrix[z2][0][n2][n2];
+	ComplexType y=GM_matrix[z1][0][n1][n1]*GM_matrix[z2][0][n2][n2];
 	x+=sqr(real(y))+sqr(imag(y));	
 ;}
 

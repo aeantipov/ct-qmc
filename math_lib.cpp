@@ -13,7 +13,8 @@
 
 n_type num_zero=1e-6;
 
-int INT_RANDOM=time(NULL);  //from 1 to 2^31-1
+
+int INT_RANDOM=time(NULL);
 
 int int_rnd()
 {
@@ -47,7 +48,7 @@ n_type sqr (n_type x)
         return x*x;
 ;}
 
-n_type norm2(complex & x)
+n_type norm2(ComplexType & x)
 {
 	return x.real()*x.real()+x.imag()*x.imag();
 ;}
@@ -211,32 +212,32 @@ n_type Spline::val_no_check(n_type x)
 
 struct Vector
 {
-	complex *x;//[VectorDimension];
+	ComplexType *x;//[VectorDimension];
 	int to_del;
 	Vector();
-	Vector(complex *);
+	Vector(ComplexType *);
 	Vector (Vector &);
 	~Vector();
 	void  operator = (Vector &);
 	void  operator += (Vector &);
 	void  operator -= (Vector &);
-	void  operator *= (complex);
-	void  operator /= (complex);
+	void  operator *= (ComplexType);
+	void  operator /= (ComplexType);
 };
 
 Vector::Vector()
 {
-	x= new complex[VectorDimension]; to_del=1;
+	x= new ComplexType[VectorDimension]; to_del=1;
 ;}
 
-Vector::Vector(complex * p)
+Vector::Vector(ComplexType * p)
 {
 	x=p; to_del=0;
 ;}
 
 Vector::Vector(Vector & v)
 {
-	x= new complex[VectorDimension]; to_del=1;
+	x= new ComplexType[VectorDimension]; to_del=1;
 	for (int i=0; i<VectorDimension; i++) x[i]=v.x[i];
 ;}
 
@@ -261,12 +262,12 @@ void Vector:: operator -= (Vector & a)
 	for (int i=0; i<VectorDimension; i++) x[i]-=a.x[i];
 ;}
 
-void Vector:: operator *= (complex a)
+void Vector:: operator *= (ComplexType a)
 {
 	for (int i=0; i<VectorDimension; i++) x[i]*=a;
 ;}
 
-void Vector:: operator /= (complex a)
+void Vector:: operator /= (ComplexType a)
 {
 	for (int i=0; i<VectorDimension; i++) x[i]/=a;
 ;}
@@ -293,35 +294,35 @@ Vector operator - (Vector & a, Vector & b)
 	return z;
 ;}
 
-Vector operator * (complex a, Vector & b)
+Vector operator * (ComplexType a, Vector & b)
 {
 	Vector z;
 	for (int i=0; i<VectorDimension; i++) z.x[i]=a*b.x[i];
 	return z;
 ;}
 
-Vector operator * (Vector & b, complex a)
+Vector operator * (Vector & b, ComplexType a)
 {
 	Vector z;
 	for (int i=0; i<VectorDimension; i++) z.x[i]=b.x[i]*a;
 	return z;
 ;}
 
-Vector operator / (Vector & b, complex a)
+Vector operator / (Vector & b, ComplexType a)
 {
 	Vector z;
 	for (int i=0; i<VectorDimension; i++) z.x[i]=b.x[i]/a;
 	return z;
 ;}
 
-complex operator * (Vector & a, Vector & b)
+ComplexType operator * (Vector & a, Vector & b)
 {
-	complex z=0;
+	ComplexType z=0;
 	for (int i=0; i<VectorDimension; i++) z+=a.x[i]*b.x[i];
 	return z;
 ;}
 
-complex sqr (Vector &a)
+ComplexType sqr (Vector &a)
 {
 	return a*a;
 ;}
@@ -349,10 +350,10 @@ void print(ofstream &f, Vector & a)
 
 struct Matrix
 {
-	complex **x;//[VectorDimension];                //x[i] указывает на строку i
+	ComplexType **x;//[VectorDimension];                //x[i] указывает на строку i
 	int flag; //f==0 => delete after the first usage
 	Matrix ();
-	Matrix (complex );
+	Matrix (ComplexType );
    	Matrix (n_type x);
 	Matrix (Matrix &);
 	Matrix (Vector&, Vector &); //direct product
@@ -360,13 +361,13 @@ struct Matrix
 	~Matrix();
 	void new_memory(); //explicitly get new memory for x...
 
-   	void  operator = (complex );
+   	void  operator = (ComplexType );
 	void  operator = (n_type );
 	void  operator = (Matrix &);
 	void  operator += (Matrix &);
 	void  operator -= (Matrix &);
-	void  operator *= (complex);
-	void  operator /= (complex);
+	void  operator *= (ComplexType);
+	void  operator /= (ComplexType);
 
 	Vector column(int );
 	Vector row(int );
@@ -375,15 +376,15 @@ struct Matrix
 
 Matrix:: Matrix ()
 {
-	x=new complex *  [VectorDimension];
-	for (int i=0; i<VectorDimension; i++) x[i]=new complex[VectorDimension];
+	x=new ComplexType *  [VectorDimension];
+	for (int i=0; i<VectorDimension; i++) x[i]=new ComplexType[VectorDimension];
 	flag=1;
 ;}
 
-Matrix:: Matrix (complex  r)
+Matrix:: Matrix (ComplexType  r)
 {
-	x=new complex *  [VectorDimension];
-	for (int i=0; i<VectorDimension; i++) x[i]=new complex[VectorDimension];
+	x=new ComplexType *  [VectorDimension];
+	for (int i=0; i<VectorDimension; i++) x[i]=new ComplexType[VectorDimension];
 	for (int l=0; l<VectorDimension; l++)
 	for (int j=0; j<VectorDimension; j++) if (l==j) x[l][j]=r; else x[l][j]=0;
 	flag=1;
@@ -391,18 +392,18 @@ Matrix:: Matrix (complex  r)
 
 Matrix:: Matrix (n_type  r)
 {
-	x=new complex *  [VectorDimension];
-	for (int i=0; i<VectorDimension; i++) x[i]=new complex[VectorDimension];
+	x=new ComplexType *  [VectorDimension];
+	for (int i=0; i<VectorDimension; i++) x[i]=new ComplexType[VectorDimension];
 	for (int l=0; l<VectorDimension; l++)
-	for (int j=0; j<VectorDimension; j++) if (l==j) x[l][j]=complex(r,0); else x[l][j]=0;
+	for (int j=0; j<VectorDimension; j++) if (l==j) x[l][j]=ComplexType(r,0); else x[l][j]=0;
 	flag=1;
 ;}
 
 
 Matrix::Matrix (Matrix & m)
 {
-	x=new complex *  [VectorDimension];
-	for (int i=0; i<VectorDimension; i++) x[i]=new complex[VectorDimension];
+	x=new ComplexType *  [VectorDimension];
+	for (int i=0; i<VectorDimension; i++) x[i]=new ComplexType[VectorDimension];
 	for (int l=0; l<VectorDimension; l++)
 	for (int j=0; j<VectorDimension; j++) x[l][j]=m.x[l][j];
 	flag=1;
@@ -411,8 +412,8 @@ Matrix::Matrix (Matrix & m)
 
 Matrix::Matrix (Vector &v1, Vector & v2)
 {
-	x=new complex *  [VectorDimension];
-	for (int i=0; i<VectorDimension; i++) x[i]=new complex[VectorDimension];
+	x=new ComplexType *  [VectorDimension];
+	for (int i=0; i<VectorDimension; i++) x[i]=new ComplexType[VectorDimension];
 	for (int l=0; l<VectorDimension; l++)
 	for (int j=0; j<VectorDimension; j++) x[l][j]=v1.x[l]*v2.x[j];
 	flag=1;
@@ -420,8 +421,8 @@ Matrix::Matrix (Vector &v1, Vector & v2)
 
 Matrix::Matrix (Vector &v)
 {
-	x=new complex *  [VectorDimension];
-	for (int i=0; i<VectorDimension; i++) x[i]=new complex[VectorDimension];
+	x=new ComplexType *  [VectorDimension];
+	for (int i=0; i<VectorDimension; i++) x[i]=new ComplexType[VectorDimension];
 	for (int l=0; l<VectorDimension; l++)
 	for (int j=0; j<VectorDimension; j++)
    	if (l!=j) x[l][j]=0; else x[l][j]=v.x[l];
@@ -443,8 +444,8 @@ void Matrix:: new_memory()
 	static int f=0;
 	if (f==0)
    {
-   x=new complex *  [VectorDimension];
-   for (int i=0; i<VectorDimension; i++) x[i]=new complex[VectorDimension];
+   x=new ComplexType *  [VectorDimension];
+   for (int i=0; i<VectorDimension; i++) x[i]=new ComplexType[VectorDimension];
    ;}
    f=1;
    for (int i=0; i<VectorDimension; i++)
@@ -462,7 +463,7 @@ void Matrix:: operator = (n_type r)
 	for (int j=0; j<VectorDimension; j++) if (l==j) x[l][j]=r; else x[l][j]=0;
 ;}
 
-void Matrix:: operator = (complex r)
+void Matrix:: operator = (ComplexType r)
 {
 	for (int l=0; l<VectorDimension; l++)
 	for (int j=0; j<VectorDimension; j++) if (l==j) x[l][j]=r; else x[l][j]=0;
@@ -495,13 +496,13 @@ void Matrix:: operator -= (Matrix & a)
 	if (a.flag==0) a.~Matrix();
 ;}
 
-void Matrix:: operator *= (complex  a)
+void Matrix:: operator *= (ComplexType  a)
 {
 	for (int i=0; i<VectorDimension; i++)
 	for (int j=0; j<VectorDimension; j++) x[i][j]*=a;
 ;}
 
-void Matrix:: operator /= (complex a)
+void Matrix:: operator /= (ComplexType a)
 {
 	for (int i=0; i<VectorDimension; i++)
 	for (int j=0; j<VectorDimension; j++) x[i][j]/=a;
@@ -542,7 +543,7 @@ Matrix & operator - (Matrix & a, Matrix & b)
 
 
 
-Matrix & operator * (Matrix & a, complex b)
+Matrix & operator * (Matrix & a, ComplexType b)
 {
 	Matrix * z=new Matrix(); (*z).flag=0;
 	for (int i=0; i<VectorDimension; i++)
@@ -551,7 +552,7 @@ Matrix & operator * (Matrix & a, complex b)
 	return * z;
 ;}
 
-Matrix & operator * (complex b, Matrix & a)
+Matrix & operator * (ComplexType b, Matrix & a)
 {
 	Matrix * z=new Matrix(); (*z).flag=0;
 	for (int i=0; i<VectorDimension; i++)
@@ -560,7 +561,7 @@ Matrix & operator * (complex b, Matrix & a)
 	return * z;
 ;}
 
-Matrix & operator / (Matrix & a, complex b)
+Matrix & operator / (Matrix & a, ComplexType b)
 {
 	Matrix * z=new Matrix(); (*z).flag=0;
 	for (int i=0; i<VectorDimension; i++)
@@ -601,7 +602,7 @@ Matrix &  operator * (Matrix & a, Matrix & b)
 	for (int i=0; i<VectorDimension; i++)
 	for (int j=0; j<VectorDimension; j++)
 	{
-		complex w=0;
+		ComplexType w=0;
 		for (int k=0; k<VectorDimension; k++) w+=a.x[i][k]*b.x[k][j];
 		(*z).x[i][j]=w;
 	;}
@@ -643,7 +644,7 @@ void Matrix:: trans()
    {
    x[i][i]=conj(x[i][i]);
    for (int j=i+1; j<VectorDimension; j++)
-   	{complex a=x[i][j];
+   	{ComplexType a=x[i][j];
       x[i][j]=conj(x[j][i]);
       x[j][i]=conj(a);}
    ;}
@@ -695,9 +696,9 @@ void print (Matrix & a, ofstream & st)
 	;}
 ;}
 
-complex Sp(Matrix & M)
+ComplexType Sp(Matrix & M)
 {
-	complex s=0;
+	ComplexType s=0;
 	for (int i=0; i<VectorDimension; i++) s+=M.x[i][i];
 	if (M.flag==0) M.~Matrix();
    return s;
@@ -729,7 +730,7 @@ void Inverse(Matrix & a, int improve=0) //Gauss with partial pivoting
 		for (int j=i; j<VectorDimension; j++)
 			if ( fmax<abs(a.x[j][i]) )
          {jmax=j; fmax=abs(a.x[j][i]);}
-		complex * aux;
+		ComplexType * aux;
 		aux=a.x[i]; a.x[i]=a.x[jmax]; a.x[jmax]=aux;
 		aux=r.x[i]; r.x[i]=r.x[jmax]; r.x[jmax]=aux;
 		if (norm2(a.x[i][i])<=0) {cout<<"LInverse!";SetNull(a); return;}
@@ -738,13 +739,13 @@ void Inverse(Matrix & a, int improve=0) //Gauss with partial pivoting
 		for (int j=0; j<VectorDimension; j++)
 		if (j!=i)
 		{
-			complex f=a.x[j][i]/a.x[i][i];
+			ComplexType f=a.x[j][i]/a.x[i][i];
 			{for (int l=i; l<VectorDimension; l++) a.x[j][l]-=a.x[i][l]*f;}
 			{for (int l=0; l<VectorDimension; l++) r.x[j][l]-=r.x[i][l]*f;}
 		;}
 		else
 		{
-			complex f=n_type(1)/a.x[i][i];
+			ComplexType f=n_type(1)/a.x[i][i];
 			{for (int l=i; l<VectorDimension; l++) a.x[j][l]*=f;}
 			{for (int l=0; l<VectorDimension; l++) r.x[j][l]*=f;}
 		;}
@@ -762,7 +763,7 @@ Matrix & operator / (Matrix & A, Matrix & B)
 	return A*C;
 ;}
 
-Matrix & operator / (complex &A, Matrix & B)
+Matrix & operator / (ComplexType &A, Matrix & B)
 {
 	Matrix C=B; Inverse(C);
 	return A*C;
@@ -775,10 +776,10 @@ Matrix operator / (n_type A, Matrix & B)
 ;}
 */
 
-complex det(Matrix &a)
+ComplexType det(Matrix &a)
 {
 	Matrix b=a;
-	complex s=1;
+	ComplexType s=1;
 	for (int i=0; i<VectorDimension-1; i++)
 	{
 		//pivoting
@@ -788,7 +789,7 @@ complex det(Matrix &a)
 		if ( fmax<abs(b.x[j][i]) ) {jmax=j; fmax=abs(b.x[j][i]);}
 		if (jmax!=i)
 		{
-			complex * aux;
+			ComplexType * aux;
 			aux=b.x[i]; b.x[i]=b.x[jmax]; b.x[jmax]=aux;
 			s=-s;
 		;}
@@ -797,7 +798,7 @@ complex det(Matrix &a)
 		if (norm2(b.x[i][i])<=0) return 0;
 		for (int j=i+1; j<VectorDimension; j++)
 		{
-		complex f=b.x[j][i]/b.x[i][i];
+		ComplexType f=b.x[j][i]/b.x[i][i];
 		for (int k=i; k<VectorDimension; k++) b.x[j][k]-=f*b.x[i][k];
 		;}
 	;}

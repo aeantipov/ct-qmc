@@ -1,7 +1,20 @@
 
+extern default_dict internal_input;
+#ifdef use_mpi
+extern CTQMC_WORLD CTQMC;
+#endif
+
 void Ini()
 {
-	cout<<"\n       This is CT-QMC code version 1.5RC1.1\n       Check www.ct-qmc.ru for latest updates.\n";
+
+#ifdef use_mpi
+    CTQMC.getStream()<<"\n       This is CT-QMC code version 1.6\n       Check www.ct-qmc.org for latest updates.\n";
+    CTQMC.getStream()<<"\n       Using MPI Version.\n";
+#else 
+    cout<<"\n       This is CT-QMC code version 1.6\n       Check www.ct-qmc.org for latest updates.\n";
+    cout<<"\n       Using single-processor version.\n";
+#endif
+
    for (int ll=0;ll<N_max;ll++){point p0(0,0,0); p[ll]=p0; point_ p0_(0,0,0); p_[ll]=p0_;}
 	mu1_Gt=new n_type * [n_zone]; {for (int i=0; i<n_zone; i++) mu1_Gt[i]=new n_type [n_part];}
 	mu2_Gt=new n_type * [n_zone]; {for (int i=0; i<n_zone; i++) mu2_Gt[i]=new n_type [n_part];}   
@@ -15,18 +28,18 @@ void Ini()
       {
       	M[z][j]=new n_type [N_max];
       ;}                                               
-   GM_matrix[z]=new complex **[wn_max];
-   Gtotal_st[z]=new complex **[wn_max];
-   GM00_st[z]=new complex *[wn_max];
+   GM_matrix[z]=new ComplexType **[wn_max];
+   Gtotal_st[z]=new ComplexType **[wn_max];
+   GM00_st[z]=new ComplexType *[wn_max];
    for (int w=0; w<wn_max; w++)
    {
-      	GM_matrix[z][w]=new complex *[n_part];
-         Gtotal_st[z][w]=new complex *[n_part];
-         GM00_st[z][w]=new complex [n_part];
+      	GM_matrix[z][w]=new ComplexType *[n_part];
+         Gtotal_st[z][w]=new ComplexType *[n_part];
+         GM00_st[z][w]=new ComplexType [n_part];
          for (int n1=0; n1<n_part; n1++)
          {
-         	GM_matrix[z][w][n1]=new complex [n_part];
-            Gtotal_st[z][w][n1]=new complex [n_part];
+         	GM_matrix[z][w][n1]=new ComplexType [n_part];
+            Gtotal_st[z][w][n1]=new ComplexType [n_part];
          ;}
    ;}
 
@@ -37,7 +50,7 @@ void Ini()
 
    cluster_ini();
 
-   {for (int i=0; i<N_max; i++) {ewt[i]=new complex [wn_max]; ewt_[i]=new complex [wn_max];};}
+   {for (int i=0; i<N_max; i++) {ewt[i]=new ComplexType [wn_max]; ewt_[i]=new ComplexType [wn_max];};}
 
 
    {for (int i=0; i<N_max; i++) hist[i]=0;}
@@ -47,12 +60,29 @@ void Ini()
 
 WL_max=abs(int(n_part*U*beta*value("WL_factor"))*2)+2;
 
-   from_scratch();        cout<<"+"<<flush;
+   from_scratch();
+   #ifdef use_mpi
+   CTQMC.getStream()<<"+"<<flush;
+   #else 
+   cout<<"+"<<flush;
+   #endif
 if (WL_flag==0)
 {
 	int n=WL_max*WL_max; if (n>int_value("Initial_steps_without_WL")) n=int_value("Initial_steps_without_WL");
-   {for (int i=0; i<n; i++) {steps(); if (i%1000==0) cout<<">"<<flush;};}
-   from_scratch();        cout<<"+"<<flush;
+   {for (int i=0; i<n; i++) {steps(); if (i%1000==0) 
+   	{
+   #ifdef use_mpi
+ 	  CTQMC.getStream()<<">"<<flush;
+   #else 
+ 	  cout<<">"<<flush;
+   #endif
+	};}}
+   from_scratch(); 
+   #ifdef use_mpi
+   CTQMC.getStream()<<"+"<<flush;
+   #else 
+   cout<<"+"<<flush;
+   #endif
 ;}
 
 if  (WL_flag==0 || WL_flag==2)  {for (int i=0; i<N_max; i++) WL_weight[i]=0;}
@@ -80,11 +110,21 @@ do
       if (hmin<WL_Tolerance*hmax) flag=0;
    ;}
 ;}
-while (flag==0); cout<<"+"<<flush;
+while (flag==0); 
+
+#ifdef use_mpi
+CTQMC.getStream()<<"+"<<flush;
+#else
+cout<<"+"<<flush;
+#endif
 for (int i=0; i<WL_max/2; i++) WL_str<<hist[i]<<"       "; WL_str<<"\n"<<flush;
 if (l!=0) WL_factor/=2;    from_scratch();
 ;}
+#ifdef use_mpi
+CTQMC.getStream()<<"WL factors are determined up to "<<WL_max/2<<flush;
+#else
 cout<<"WL factors are determined up to "<<WL_max/2<<flush;
+#endif
 ;}
 
    weight_sum=0; weight_sum2=0;

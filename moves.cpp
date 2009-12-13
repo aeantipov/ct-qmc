@@ -18,12 +18,12 @@ bool use_wn(int wn)
    return r[wn];
 ;}
 
-complex GM_interpolate(int z, int wn, int q1, int q2)
+ComplexType GM_interpolate(int z, int wn, int q1, int q2)
 {
 	if (use_wn(wn)) return GM_matrix[z][wn][q1][q2];
    static int k=int_value("sparse_Matsubaras");
    int w1=k*(wn/k); n_type x=(n_type(wn%k))/k;                      //  cout<<wn<<">"<<w1<<" "<<flush;
-   complex y0=GM_matrix[z][w1-k][q1][q2], y1=GM_matrix[z][w1][q1][q2], y2=GM_matrix[z][w1+k][q1][q2],y3=GM_matrix[z][w1+2*k][q1][q2];
+   ComplexType y0=GM_matrix[z][w1-k][q1][q2], y1=GM_matrix[z][w1][q1][q2], y2=GM_matrix[z][w1+k][q1][q2],y3=GM_matrix[z][w1+2*k][q1][q2];
    return y1-(2.*y0+3.*y1-6.*y2+y3)*x/6.+(y0-2.*y1+y2)*x*x/2.-(y0-3.*y1+3.*y2-y3)*x*x*x/6.;
 ;}
 
@@ -54,10 +54,10 @@ void prev(int z, int & next_) //gives the previous point of a given zone
 
 //========================= subroutines for Green function calcs =====================
 
-complex MG(int z, int wn, int k, int q, int* kk)     //k: index in M, q: index in observable-space
+ComplexType MG(int z, int wn, int k, int q, int* kk)     //k: index in M, q: index in observable-space
 {
-   complex s=0;
-	complex ** x=(*Grot(z,wn,1)).x; 
+   ComplexType s=0;
+	ComplexType ** x=(*Grot(z,wn,1)).x; 
 	for (int j=0; j<Nc_z[z]; j++)
        	s+=M[z][k][j]*(x[p[kk[j]].i][q]*ewt_[kk[j]][wn]);
 	return s;
@@ -65,10 +65,10 @@ complex MG(int z, int wn, int k, int q, int* kk)     //k: index in M, q: index i
 
 
 
-complex GM(int z, int wn, int k, int q, int* kk)
+ComplexType GM(int z, int wn, int k, int q, int* kk)
 {
-   complex s=0;
-	complex **x=(*Grot(z,wn,-1)).x;
+   ComplexType s=0;
+	ComplexType **x=(*Grot(z,wn,-1)).x;
 	for (int j=0; j<Nc_z[z]; j++)
 			s+=M[z][j][k]*(x[q][p_[kk[j]].i]*ewt[kk[j]][wn]);
 	return s;
@@ -90,16 +90,16 @@ void add_point()  //just adds a point; M 2b recalculated separately
          {
         		n_type w=Pi*(2*wn+1)/beta;
             n_type a=w*t, a_=w*t_;
-        		ewt[Nc][wn]=complex(cos(a), sin(a));//exp(I*w*p[Nc].t);
-            ewt_[Nc][wn]=complex(cos(a_), -sin(a_));//exp(-I*w*p_[Nc].t);
+        		ewt[Nc][wn]=ComplexType(cos(a), sin(a));//exp(I*w*p[Nc].t);
+            ewt_[Nc][wn]=ComplexType(cos(a_), -sin(a_));//exp(-I*w*p_[Nc].t);
          ;}
          else
          for (int wn=0; wn<wn_max; wn++)
          {
           	n_type w=Pi*(2*wn+1)/beta;
             n_type a=w*t, ca=cos(a), sa=sin(a);                       //try more optimization with sin(x+y) formula!
-        		ewt[Nc][wn]=complex(ca, sa);//exp(I*w*p[Nc].t);
-            ewt_[Nc][wn]=complex(ca,-sa);//exp(-I*w*p_[Nc].t);
+        		ewt[Nc][wn]=ComplexType(ca, sa);//exp(I*w*p[Nc].t);
+            ewt_[Nc][wn]=ComplexType(ca,-sa);//exp(-I*w*p_[Nc].t);
          ;}
 
 
@@ -123,7 +123,7 @@ void remove_point(int K) //same thing
 
         Nc--;
         point pK=p[K]; point_ pK_=p_[K];n_type uK=u[K], aK=a[K]; int wlK=wl[K];
-        complex *ewtK=ewt[K], *ewtK_=ewt_[K];
+        ComplexType *ewtK=ewt[K], *ewtK_=ewt_[K];
         for (int i=K; i<Nc; i++)
         		{p[i]=p[i+1];p_[i]=p_[i+1];u[i]=u[i+1];a[i]=a[i+1];wl[i]=wl[i+1];ewt[i]=ewt[i+1];ewt_[i]=ewt_[i+1];}
         p[Nc]=pK; p_[Nc]=pK_;u[Nc]=uK;a[Nc]=aK; wl[Nc]=wlK; ewt[Nc]=ewtK; ewt_[Nc]=ewtK_;
@@ -153,7 +153,7 @@ n_type modif_remove_1(int K)
 
    	  n_type y=M[z][k][k];                             //y is determined
 
-		  static complex * gm=new complex[n_part], * mg=new complex[n_part];
+		  static ComplexType * gm=new ComplexType[n_part], * mg=new ComplexType[n_part];
         n_type d=beta*M[z][k][k];
         {
 			static int * kk_array= new int [N_max];
@@ -179,14 +179,14 @@ void modif_remove_2(int K)
 
    	  n_type y=M[z][k][k];                             //y is determined
 
-        static complex ** gm, ** mg;//[WN_max][n_part];
+        static ComplexType ** gm, ** mg;//[WN_max][n_part];
         static int gf=0; if (gf==0)
         {
-        		gm=new complex *[wn_max];mg=new complex *[wn_max];
+        		gm=new ComplexType *[wn_max];mg=new ComplexType *[wn_max];
             for (int i=0; i<wn_max; i++)
             {
-            	gm[i]=new complex [n_part];
-               mg[i]=new complex [n_part];
+            	gm[i]=new ComplexType [n_part];
+               mg[i]=new ComplexType [n_part];
             ;}
         gf=1;
         ;}
@@ -270,7 +270,7 @@ n_type modif_add_1(int f2)
         ;}                                                        //M is changed
 
 
-        static complex * gm=new complex[n_part], * mg=new complex[n_part];
+        static ComplexType * gm=new ComplexType[n_part], * mg=new ComplexType[n_part];
 
         static int * kk_array= new int [N_max];
 		  {int kk=-1; for (int j=0; j<Nc_z[z]; j++) {next(z,kk); kk_array[j]=kk;};}
@@ -296,14 +296,14 @@ n_type modif_add_1(int f2)
 void modif_add_2(int z)
 {
 
-        static complex ** gm, ** mg;//[WN_max][n_part];
+        static ComplexType ** gm, ** mg;//[WN_max][n_part];
         static int gf=0; if (gf==0)
         {
-        		gm=new complex *[wn_max];mg=new complex *[wn_max];
+        		gm=new ComplexType *[wn_max];mg=new ComplexType *[wn_max];
             for (int i=0; i<wn_max; i++)
             {
-            	gm[i]=new complex [n_part];
-               mg[i]=new complex [n_part];
+            	gm[i]=new ComplexType [n_part];
+               mg[i]=new ComplexType [n_part];
             ;}
         gf=1;
         ;}

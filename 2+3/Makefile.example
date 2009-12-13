@@ -1,0 +1,47 @@
+# Project: ctqmc
+
+#-Wno-non-template-friend
+CPP= g++ -O3 -Wno-non-template-friend -Wno-write-strings
+MPICPP = mpic++ -O3 -Wno-non-template-friend -Wno-write-strings
+#CPP = icpc -O3 -Wall -Wno-non-virtual-dtor -ansi -pedantic
+#NORB= -Dorb1
+#NORB= -Dorb2
+
+PART= -Dorb1
+#Determines how many particles do we have
+
+ZONE= -Dzone6
+#Determines how many zones do we have
+
+MPI = -Duse_mpi
+#Determines whether we use mpi or not
+
+CFLAGS = $(PART) $(ZONE)
+
+default: ct-qmc-mpi
+
+minictqmcworld.o : ../minictqmcworld.cpp ../minictqmcworld.h
+	$(MPICPP) $(CXXFLAGS) $(INCLUDE) -c ../minictqmcworld.cpp 
+
+ct-qmc: ct-qmc.cpp ../main.cpp ../ini.cpp
+	$(CPP) $(CFLAGS) ct-qmc.cpp -o ct-qmc
+
+ct-qmc-mpi: ct-qmc.cpp ../main_mpi.cpp ../ini.cpp ../input.cpp minictqmcworld.o 
+	$(MPICPP) $(CFLAGS) $(MPI) ct-qmc.cpp minictqmcworld.o -o ct-qmc-mpi
+
+change : ../change.cpp
+	$(CPP) ../change.cpp -o ../change
+
+clean:
+	${RM} ct-qmc *.o
+
+cleandata:
+	cp _input.dat _input.dat.backup
+	rm -f *.dat
+	rm -f *.it*
+	mv _input.dat.backup _input.dat
+
+
+
+
+
