@@ -201,7 +201,7 @@ Matrix & G0_inf_w(int z, n_type w)
      if (i!=j)
      {
       M.x[i][j]=(*G_asimptotics_m1[z]).x[i][j]/(I*w*(*G_asimptotics_m2[z]).x[i][j]-(w*w))
-                +I*(*G_asimptotics_m3[z]).x[i][j]/(w*w*w);
+               +I*(*G_asimptotics_m3[z]).x[i][j]/(w*w*w);
      ;}
      else
      {
@@ -214,7 +214,9 @@ Matrix & G0_inf_w(int z, n_type w)
 
 n_type Fermi_dist(n_type mu, n_type t)
 {
-	return exp(mu*t)/(1+exp(mu*beta));
+	if (mu*(beta-t)>200.) return 0.;
+	if (mu*t>200.) return exp(mu*(t-beta));
+	return 1./(exp(-mu*t)+exp(mu*(beta-t)));
 ;}
 
 Matrix & G0_inf_t(int z, n_type t)
@@ -227,7 +229,8 @@ Matrix & G0_inf_t(int z, n_type t)
      if (i!=j)
      {
       if (fabs(real((*G_asimptotics_m2[z]).x[i][j]))<1e-10)
-          {M.x[i][j]=real((*G_asimptotics_m1[z]).x[i][j])*(2*t-beta)/4;}
+          {M.x[i][j]=real((*G_asimptotics_m1[z]).x[i][j])*(2*t-beta)/4.;
+		  }
       else
       {
           M.x[i][j]=real((*G_asimptotics_m1[z]).x[i][j])*(0.5-Fermi_dist(-real((*G_asimptotics_m2[z]).x[i][j]),t))/real((*G_asimptotics_m2[z]).x[i][j]);
