@@ -1,0 +1,145 @@
+DMFT++ solver for Hubbard-like models
+
+$use_minimum_MC_steps$
+1
+
+$minimum_MC_steps$
+15000
+
+$maximum_MC_steps$
+15000000
+
+$U$
+0.0001
+Coulomb repulsion
+
+$beta$
+1
+inverse temperature
+
+$mu$
+0
+mu=0 correspondes to half-filling
+
+$read_delta$
+2
+
+$desired_accuracy$
+0.0005
+desired errorbar in G(\tau)
+
+$calculate_Gamma4$
+0
+
+$calculate_Gamma6$
+0
+
+$backup_Gamma4$
+0
+whether to make backup copies of the vertices for convergence checks CAUTION: produces large amounts of data!
+
+$Gamma4_backup_period$
+5000000
+
+$backup_Gamma6$
+0
+whether to make backup copies of the vertices for convergence checks CAUTION: produces large amounts of data!
+
+$Gamma6_backup_period$
+5000000
+
+$number_of_Matsubara_frequencies$
+100
+
+$number_of_Matsubara_frequencies_for_Gamma4$
+70
+must be an even number
+
+$output_period$
+100000
+
+$output_period_time$
+120
+
+$measure_tau_correlators$
+0
+measure four-point correlation functions in imaginary time, e.g. double occupancy
+
+
+$use_Wang_Landau$
+0 
+
+$Use_Global_moves$
+1
+
+$Enable_cluster_updates$
+1
+
+
+$number_of_kpoints_x$
+24
+must be larger or equal to 1
+
+$number_of_kpoints_y$
+24
+must be larger or equal to 1
+
+$number_of_kpoints_z$
+1
+must be larger or equal to 1
+
+$AlphaSum$
+1.0
+
+$update_mu$
+0
+whether to update mu during DMFT iterations
+
+$update_AlphaSum$
+0
+whether to update AlphaSum during DMFT iterations
+
+$desired_occupancy$
+1.0
+desired total occupancy for all spins and orbitals
+
+$zeta$
+0.1
+mixing parameter for mu/AlphaSum update
+
+$ksi$
+1.0
+mixing parameter for Delta update
+
+$ksiG$
+0.5
+mixing paramater for Gd update; specifies how much of !Gd_old! should be assigned, i.e. ksiG=0 corresponds to fully assigning Gd_new
+
+$t$
+0.25
+Hopping 1-3,2-3
+
+$t1$
+0.
+Hopping 1-2
+
+
+$chi4_numerical_zero$
+1e-10
+
+$ek_numerical_zero$
+1e-8
+0 for Ek
+
+
+$DMFT_sigma$
+1
+Added by "change"
+
+$J$
+4.
+Added by "change"
+
+$change$
+J
+Added by "change"

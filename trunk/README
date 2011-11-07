@@ -4,8 +4,9 @@ The instructions to compile and build this ct-qmc project
 
 1. This code doesn't rely on any external libraries except for MPI in case needed.
 2. The description of impurity problem is in DIR/ct-qmc.cpp, where DIR stands for an arbitatrary directory. Two predefined examples are provided : 
-  -- cluster - for single-orbital cluster calcs,
+  -- src - for single-orbital cluster calcs,
   -- 2+3 - for a multiorbital(2 or 3 band) single atom impurity
+  -- kondo - for a kondo J interaction
 3. To build a proper version of ct-qmc code, go to DIR, copy Makefile.example to Makefile and patch it accordingly. The most important thing is to provide -I flag to this directory.
 The PART flag corresponds to number of particles for a given cluster (for multiorbital case - to the number of bands), while ZONE flag corresponds to number of zones, generally spin zones.
 4. A single-cpu version of code is then built by 'make ct-qmc', whilst the mpi version is built by 'make ct-qmc-mpi' or simply make with no arguments.
@@ -18,3 +19,4 @@ Notes
 This version of code supports MPI Green's function calculation. There is no implementation for MPI vertex calculation.
 The major development of this code is stopped. Therefore it is provided AS-IS with no kind of support. 
 Feel free to use it for any purposes.
+

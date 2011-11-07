@@ -10,6 +10,23 @@
 
 #include "minictqmcworld.h"
 #include <cstdlib>
+#include <string>
+
+/*-----------------------------------------------------------------------------------*/
+
+void CTQMC_MPI_COMPLEX_ADD(ComplexType *in, ComplexType *inout, int *len, MPI_Datatype *dtype)
+{
+  int i;
+  ComplexType c;
+  for (i=0; i< *len; ++i) {
+    //c = *in + *inout;
+    //c.real = in->real + inout->real;
+    //c.imag = in->imag + inout->imag; 
+    *inout=0.0;
+    in++; 
+    inout++;
+    }
+}
 
 /*-----------------------------------------------------------------------------------*/
 
@@ -37,6 +54,9 @@ void CTQMC_WORLD::INIT(int argc, char **argv, int N)
   /* Create the new communicator */
   MPI_Comm_create(MPI_COMM_WORLD, CTQMC_PROCS, &CTQMC_COMM);
 
+  MPI_Type_contiguous( 2, MPI_DOUBLE, &CTQMCComplex );
+  MPI_Type_commit( &CTQMCComplex );
+  MPI_Op_create( (MPI_User_function*) CTQMC_MPI_COMPLEX_ADD, true, &ComplexAdd );
   WORLD_SIZE=N;
 
   river_names=new char *[N];
@@ -126,9 +146,9 @@ VectorType& CTQMC_WORLD::recv_VectorType(const int SENDER, CTQMC_TAG tag)
 
 void CTQMC_WORLD::recv_VectorType(const int SENDER, VectorType& result, int &size, CTQMC_TAG tag ) 
 { 
-  MPI_Recv(&size, 1, MPI::INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(&size, 1, MPI_INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
   result.resize(size);
-  MPI_Recv(&result[0], size, MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(&result[0], size, MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
 }
 
 void CTQMC_WORLD::recv_VectorType(const int SENDER, VectorType& result, CTQMC_TAG tag)
@@ -153,9 +173,9 @@ RealVectorType& CTQMC_WORLD::recv_RealVectorType(const int SENDER, CTQMC_TAG tag
 }
 void CTQMC_WORLD::recv_RealVectorType(const int SENDER, RealVectorType& result, int &size, CTQMC_TAG tag)
 {
-  MPI_Recv(&size, 1, MPI::INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(&size, 1, MPI_INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
   result.resize(size);
-  MPI_Recv(&result[0], size, MPI::DOUBLE, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(&result[0], size, MPI_DOUBLE, SENDER, tag, CTQMC_COMM, &CT_STATUS);
 }
 void CTQMC_WORLD::recv_RealVectorType(const int SENDER, RealVectorType& result, CTQMC_TAG tag)
 {
@@ -180,9 +200,9 @@ IntVectorType& CTQMC_WORLD::recv_IntVectorType(const int SENDER, CTQMC_TAG tag)
 }
 void CTQMC_WORLD::recv_IntVectorType(const int SENDER, IntVectorType& result, int &size, CTQMC_TAG tag)
 {
-  MPI_Recv(&size, 1, MPI::INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(&size, 1, MPI_INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
   result.resize(size);
-  MPI_Recv(&result[0], size, MPI::INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(&result[0], size, MPI_INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
 }
 
 void CTQMC_WORLD::recv_IntVectorType(const int SENDER, IntVectorType& result, CTQMC_TAG tag)
@@ -197,12 +217,12 @@ void CTQMC_WORLD::recv_IntVectorType(const int SENDER, IntVectorType& result, CT
 int CTQMC_WORLD::recv_int(const int SENDER, CTQMC_TAG tag) 
 {
  int result;
- MPI_Recv(&result, 1, MPI::INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+ MPI_Recv(&result, 1, MPI_INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
  return result;
 }
 void CTQMC_WORLD::recv_int(const int SENDER, int& result, CTQMC_TAG tag)
 {
-  MPI_Recv(&result, 1, MPI::INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(&result, 1, MPI_INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
 }
 /*-----------------------------------------------------------------------------------*/
 /*-------------------------------RECEIVING n_type----------------------------------*/
@@ -210,12 +230,12 @@ void CTQMC_WORLD::recv_int(const int SENDER, int& result, CTQMC_TAG tag)
 n_type CTQMC_WORLD::recv_float(const int SENDER, CTQMC_TAG tag)
 {
   n_type result;
-  MPI_Recv(&result, 1, MPI::DOUBLE, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(&result, 1, MPI_DOUBLE, SENDER, tag, CTQMC_COMM, &CT_STATUS);
   return result;
 }
 void CTQMC_WORLD::recv_float(const int SENDER, n_type& result, CTQMC_TAG tag)
 {
-  MPI_Recv(&result, 1, MPI::DOUBLE, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(&result, 1, MPI_DOUBLE, SENDER, tag, CTQMC_COMM, &CT_STATUS);
 }
 /*-----------------------------------------------------------------------------------*/
 /*-------------------------------RECEIVING ComplexType--------------------------------*/
@@ -223,12 +243,12 @@ void CTQMC_WORLD::recv_float(const int SENDER, n_type& result, CTQMC_TAG tag)
 ComplexType CTQMC_WORLD::recv_complex(const int SENDER, CTQMC_TAG tag)
 {
   ComplexType result;
-  MPI_Recv(&result, 1, MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(&result, 1, MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
   return result;
 }
 void CTQMC_WORLD::recv_complex(const int SENDER, ComplexType& result, CTQMC_TAG tag)
 {
-  MPI_Recv(&result, 1, MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(&result, 1, MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
 }
 /*-----------------------------------------------------------------------------------*/
 /*-------------------------------RECEIVING STD::STRING-------------------------------*/
@@ -247,9 +267,9 @@ string& CTQMC_WORLD::recv_string(const int SENDER, CTQMC_TAG tag)
 }
 void CTQMC_WORLD::recv_string(const int SENDER, string& result, int &size, CTQMC_TAG tag)
 {
-  MPI_Recv(&size, 1, MPI::INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(&size, 1, MPI_INT, SENDER, tag, CTQMC_COMM, &CT_STATUS);
   char *in = new char [size];
-  MPI_Recv(in, size, MPI::CHAR, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(in, size, MPI_CHAR, SENDER, tag, CTQMC_COMM, &CT_STATUS);
   result=in;
   delete in;
 
@@ -276,8 +296,8 @@ void CTQMC_WORLD::recv(const int SENDER, string& result, CTQMC_TAG tag) {(*this)
 /*-----------------------------------------------------------------------------------*/
 void CTQMC_WORLD::send_VectorType (const int RECEIVER, VectorType &x, int size, CTQMC_TAG tag)
 {
-  MPI_Send(&size, 1 , MPI::INT, RECEIVER, tag, CTQMC_COMM);
-  MPI_Send(&x[0], size, MPI::DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM);
+  MPI_Send(&size, 1 , MPI_INT, RECEIVER, tag, CTQMC_COMM);
+  MPI_Send(&x[0], size, MPI_DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM);
 }
 
 void CTQMC_WORLD::send_VectorType (const int RECEIVER, VectorType &x, CTQMC_TAG tag)
@@ -291,8 +311,8 @@ void CTQMC_WORLD::send_VectorType (const int RECEIVER, VectorType &x, CTQMC_TAG 
 /*-----------------------------------------------------------------------------------*/
 void CTQMC_WORLD::send_RealVectorType (const int RECEIVER, RealVectorType &x, int size, CTQMC_TAG tag)
 {
-  MPI_Send(&size, 1 , MPI::INT, RECEIVER, tag, CTQMC_COMM);
-  MPI_Send(&x[0], size, MPI::DOUBLE, RECEIVER, tag, CTQMC_COMM);
+  MPI_Send(&size, 1 , MPI_INT, RECEIVER, tag, CTQMC_COMM);
+  MPI_Send(&x[0], size, MPI_DOUBLE, RECEIVER, tag, CTQMC_COMM);
 }
 void CTQMC_WORLD::send_RealVectorType (const int RECEIVER, RealVectorType &x, CTQMC_TAG tag)
 {
@@ -305,8 +325,8 @@ void CTQMC_WORLD::send_RealVectorType (const int RECEIVER, RealVectorType &x, CT
 /*-----------------------------------------------------------------------------------*/
 void CTQMC_WORLD::send_IntVectorType (const int RECEIVER, IntVectorType &x, int size, CTQMC_TAG tag)
 {
-  MPI_Send(&size, 1 , MPI::INT, RECEIVER, tag, CTQMC_COMM);
-  MPI_Send(&x[0], size, MPI::INT, RECEIVER, tag, CTQMC_COMM);
+  MPI_Send(&size, 1 , MPI_INT, RECEIVER, tag, CTQMC_COMM);
+  MPI_Send(&x[0], size, MPI_INT, RECEIVER, tag, CTQMC_COMM);
 }
 void CTQMC_WORLD::send_IntVectorType (const int RECEIVER, IntVectorType &x, CTQMC_TAG tag)
 {
@@ -319,7 +339,7 @@ void CTQMC_WORLD::send_IntVectorType (const int RECEIVER, IntVectorType &x, CTQM
 /*-----------------------------------------------------------------------------------*/
 void CTQMC_WORLD::send_int(const int RECEIVER, int x, CTQMC_TAG tag)
 {
-  MPI_Send(&x, 1 , MPI::INT, RECEIVER, tag, CTQMC_COMM);
+  MPI_Send(&x, 1 , MPI_INT, RECEIVER, tag, CTQMC_COMM);
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -327,7 +347,7 @@ void CTQMC_WORLD::send_int(const int RECEIVER, int x, CTQMC_TAG tag)
 /*-----------------------------------------------------------------------------------*/
 void CTQMC_WORLD::send_float(const int RECEIVER, n_type x, CTQMC_TAG tag)
 {
-  MPI_Send(&x, 1 , MPI::DOUBLE, RECEIVER, tag, CTQMC_COMM);
+  MPI_Send(&x, 1 , MPI_DOUBLE, RECEIVER, tag, CTQMC_COMM);
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -335,7 +355,7 @@ void CTQMC_WORLD::send_float(const int RECEIVER, n_type x, CTQMC_TAG tag)
 /*-----------------------------------------------------------------------------------*/
 void CTQMC_WORLD::send_complex(const int RECEIVER, ComplexType x, CTQMC_TAG tag)
 {
-  MPI_Send(&x, 1 , MPI::DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM);
+  MPI_Send(&x, 1 , MPI_DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM);
 }
 
 /*-----------------------------------------------------------------------------------*/
@@ -343,10 +363,10 @@ void CTQMC_WORLD::send_complex(const int RECEIVER, ComplexType x, CTQMC_TAG tag)
 /*-----------------------------------------------------------------------------------*/
 void CTQMC_WORLD::send_string(const int RECEIVER, string &x, int size, CTQMC_TAG tag)
 {
-  MPI_Send(&size, 1 , MPI::INT, RECEIVER, tag, CTQMC_COMM);
+  MPI_Send(&size, 1 , MPI_INT, RECEIVER, tag, CTQMC_COMM);
   char *buf = new char[size];
   strcpy(buf,x.c_str());
-  MPI_Send(&buf[0], size, MPI::CHAR, RECEIVER, tag, CTQMC_COMM);
+  MPI_Send(&buf[0], size, MPI_CHAR, RECEIVER, tag, CTQMC_COMM);
   delete buf;
 }
 
@@ -376,9 +396,9 @@ void CTQMC_WORLD::send (const int RECEIVER, string &x, CTQMC_TAG tag) {(*this).s
 MPI_Request& CTQMC_WORLD::isend_VectorType (const int RECEIVER, VectorType &x, int size, CTQMC_TAG tag)
 {
   static MPI_Request REQ;
-  MPI_Isend(&size, 1 , MPI::INT, RECEIVER, tag, CTQMC_COMM, &REQ);
+  MPI_Isend(&size, 1 , MPI_INT, RECEIVER, tag, CTQMC_COMM, &REQ);
   MPI_Wait(&REQ,&CT_STATUS); 
-  MPI_Isend(&x[0], size, MPI::DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM, &REQ);
+  MPI_Isend(&x[0], size, MPI_DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM, &REQ);
   return REQ;
 }
 
@@ -403,9 +423,9 @@ MPI_Request& CTQMC_WORLD::isend (const int RECEIVER, VectorType &x, CTQMC_TAG ta
 MPI_Request& CTQMC_WORLD::isend_RealVectorType (const int RECEIVER, RealVectorType &x, int size, CTQMC_TAG tag)
 {
   static MPI_Request REQ;
-  MPI_Isend(&size, 1 , MPI::INT, RECEIVER, tag, CTQMC_COMM, &REQ);
+  MPI_Isend(&size, 1 , MPI_INT, RECEIVER, tag, CTQMC_COMM, &REQ);
   MPI_Wait(&REQ,&CT_STATUS); 
-  MPI_Isend(&x[0], size, MPI::DOUBLE, RECEIVER, tag, CTQMC_COMM, &REQ);
+  MPI_Isend(&x[0], size, MPI_DOUBLE, RECEIVER, tag, CTQMC_COMM, &REQ);
   return REQ;
 }
 
@@ -431,9 +451,9 @@ MPI_Request& CTQMC_WORLD::isend (const int RECEIVER, RealVectorType &x, CTQMC_TA
 MPI_Request& CTQMC_WORLD::isend_IntVectorType (const int RECEIVER, IntVectorType &x, int size, CTQMC_TAG tag)
 {
   static MPI_Request REQ;
-  MPI_Isend(&size, 1 , MPI::INT, RECEIVER, tag, CTQMC_COMM, &REQ);
+  MPI_Isend(&size, 1 , MPI_INT, RECEIVER, tag, CTQMC_COMM, &REQ);
   MPI_Wait(&REQ,&CT_STATUS); 
-  MPI_Isend(&x[0], size, MPI::INT, RECEIVER, tag, CTQMC_COMM, &REQ);
+  MPI_Isend(&x[0], size, MPI_INT, RECEIVER, tag, CTQMC_COMM, &REQ);
   return REQ;
 }
 
@@ -457,7 +477,7 @@ MPI_Request& CTQMC_WORLD::isend (const int RECEIVER, IntVectorType &x, CTQMC_TAG
 MPI_Request& CTQMC_WORLD::isend_int(const int RECEIVER, int x, CTQMC_TAG tag)
 { 
   static MPI_Request REQ;
-  MPI_Isend(&x, 1 , MPI::INT, RECEIVER, tag, CTQMC_COMM, &REQ);
+  MPI_Isend(&x, 1 , MPI_INT, RECEIVER, tag, CTQMC_COMM, &REQ);
   return REQ;
 }
 
@@ -473,7 +493,7 @@ MPI_Request& CTQMC_WORLD::isend(const int RECEIVER, int x, CTQMC_TAG tag)
 MPI_Request& CTQMC_WORLD::isend_float(const int RECEIVER, n_type x, CTQMC_TAG tag)
 { 
   static MPI_Request REQ;
-  MPI_Isend(&x, 1 , MPI::DOUBLE, RECEIVER, tag, CTQMC_COMM, &REQ);
+  MPI_Isend(&x, 1 , MPI_DOUBLE, RECEIVER, tag, CTQMC_COMM, &REQ);
   return REQ;
 }
 
@@ -489,7 +509,7 @@ MPI_Request& CTQMC_WORLD::isend(const int RECEIVER, n_type x, CTQMC_TAG tag)
 MPI_Request& CTQMC_WORLD::isend_complex(const int RECEIVER, ComplexType x, CTQMC_TAG tag)
 { 
   static MPI_Request REQ;
-  MPI_Isend(&x, 1 , MPI::DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM, &REQ);
+  MPI_Isend(&x, 1 , MPI_DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM, &REQ);
   return REQ;
 }
 
@@ -506,20 +526,16 @@ MPI_Request& CTQMC_WORLD::isend(const int RECEIVER, ComplexType x, CTQMC_TAG tag
 /*-------------------------------IRECEIVING VectorType-------------------------------*/
 /*-----------------------------------------------------------------------------------*/
 
-MPI_Request& CTQMC_WORLD::irecv_VectorType(const int SENDER, VectorType& result, int &size, CTQMC_TAG tag) 
+MPI_Request& CTQMC_WORLD::irecv_VectorType(const int SENDER, VectorType& result, int size, CTQMC_TAG tag) 
 { 
   static MPI_Request REQ;
-  MPI_Irecv(&size, 1 , MPI::INT, SENDER, tag, CTQMC_COMM, &REQ);
-  MPI_Wait(&REQ,&CT_STATUS); 
-  result.resize(size);
-  MPI_Irecv(&result[0], size , MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &REQ);
+  MPI_Irecv(&result[0], size , MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &REQ);
   return REQ;
 }
 
 MPI_Request& CTQMC_WORLD::irecv_VectorType(const int SENDER, VectorType& result, CTQMC_TAG tag)
 { 
- int size;
- return (*this).irecv_VectorType(SENDER,result,size,tag);
+ return (*this).irecv_VectorType(SENDER,result,result.size(),tag);
 }
 
 MPI_Request& CTQMC_WORLD::irecv(const int SENDER, VectorType& result, CTQMC_TAG tag) {return (*this).irecv_VectorType(SENDER, result,tag); }
@@ -528,20 +544,16 @@ MPI_Request& CTQMC_WORLD::irecv(const int SENDER, VectorType& result, CTQMC_TAG 
 /*----------------------------IRECEIVING RealVectorType------------------------------*/
 /*-----------------------------------------------------------------------------------*/
 
-MPI_Request& CTQMC_WORLD::irecv_RealVectorType(const int SENDER, RealVectorType& result, int &size, CTQMC_TAG tag) 
+MPI_Request& CTQMC_WORLD::irecv_RealVectorType(const int SENDER, RealVectorType& result, int size, CTQMC_TAG tag) 
 { 
   static MPI_Request REQ;
-  MPI_Irecv(&size, 1 , MPI::INT, SENDER, tag, CTQMC_COMM, &REQ);
-  MPI_Wait(&REQ,&CT_STATUS);
-  result.resize(size);
-  MPI_Irecv(&result[0], size , MPI::DOUBLE, SENDER, tag, CTQMC_COMM, &REQ);
+  MPI_Irecv(&result[0], size , MPI_DOUBLE, SENDER, tag, CTQMC_COMM, &REQ);
   return REQ;
 }
 
 MPI_Request& CTQMC_WORLD::irecv_RealVectorType(const int SENDER, RealVectorType& result, CTQMC_TAG tag)
 { 
- int size;
- return (*this).irecv_RealVectorType(SENDER,result,size,tag);
+ return (*this).irecv_RealVectorType(SENDER,result,result.size(),tag);
 }
 
 MPI_Request& CTQMC_WORLD::irecv(const int SENDER, RealVectorType& result, CTQMC_TAG tag) {return (*this).irecv_RealVectorType(SENDER, result,tag); }
@@ -550,20 +562,16 @@ MPI_Request& CTQMC_WORLD::irecv(const int SENDER, RealVectorType& result, CTQMC_
 /*-----------------------------IRECEIVING IntVectorType------------------------------*/
 /*-----------------------------------------------------------------------------------*/
 
-MPI_Request& CTQMC_WORLD::irecv_IntVectorType(const int SENDER, IntVectorType& result, int &size, CTQMC_TAG tag) 
+MPI_Request& CTQMC_WORLD::irecv_IntVectorType(const int SENDER, IntVectorType& result, int size, CTQMC_TAG tag) 
 { 
   static MPI_Request REQ;
-  MPI_Irecv(&size, 1 , MPI::INT, SENDER, tag, CTQMC_COMM, &REQ);
-  MPI_Wait(&REQ,&CT_STATUS); 
-  result.resize(size);
-  MPI_Irecv(&result[0], size , MPI::INT, SENDER, tag, CTQMC_COMM, &REQ);
+  MPI_Irecv(&result[0], size , MPI_INT, SENDER, tag, CTQMC_COMM, &REQ);
   return REQ;
 }
 
 MPI_Request& CTQMC_WORLD::irecv_IntVectorType(const int SENDER, IntVectorType& result, CTQMC_TAG tag)
 { 
- int size;
- return (*this).irecv_IntVectorType(SENDER,result,size,tag);
+ return (*this).irecv_IntVectorType(SENDER,result,result.size(),tag);
 }
 
 MPI_Request& CTQMC_WORLD::irecv(const int SENDER, IntVectorType& result, CTQMC_TAG tag) {return (*this).irecv_IntVectorType(SENDER, result); }
@@ -573,7 +581,7 @@ MPI_Request& CTQMC_WORLD::irecv(const int SENDER, IntVectorType& result, CTQMC_T
 MPI_Request& CTQMC_WORLD::irecv_complex(const int SENDER, ComplexType &x, CTQMC_TAG tag)
 {
   static MPI_Request REQ;
-  MPI_Irecv(&x, 1 , MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &REQ);
+  MPI_Irecv(&x, 1 , MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &REQ);
   return REQ;
 }
 
@@ -585,7 +593,7 @@ MPI_Request& CTQMC_WORLD::irecv(const int SENDER, ComplexType &x, CTQMC_TAG tag)
 MPI_Request& CTQMC_WORLD::irecv_float(const int SENDER, n_type &x, CTQMC_TAG tag)
 {
   static MPI_Request REQ;
-  MPI_Irecv(&x, 1 , MPI::DOUBLE, SENDER, tag, CTQMC_COMM, &REQ);
+  MPI_Irecv(&x, 1 , MPI_DOUBLE, SENDER, tag, CTQMC_COMM, &REQ);
   return REQ;
 }
 
@@ -597,7 +605,7 @@ MPI_Request& CTQMC_WORLD::irecv(const int SENDER, n_type &x, CTQMC_TAG tag) {ret
 MPI_Request& CTQMC_WORLD::irecv_int(const int SENDER, int &x, CTQMC_TAG tag)
 {
   static MPI_Request REQ;
-  MPI_Irecv(&x, 1 , MPI::INT, SENDER, tag, CTQMC_COMM, &REQ);
+  MPI_Irecv(&x, 1 , MPI_INT, SENDER, tag, CTQMC_COMM, &REQ);
   return REQ;
 }
 
@@ -610,14 +618,14 @@ MPI_Request& CTQMC_WORLD::irecv(const int SENDER, int &x, CTQMC_TAG tag) {return
 
 void CTQMC_WORLD::send_complexRaw1d (const int RECEIVER, ComplexType *x, int size, CTQMC_TAG tag)
 {
-  MPI_Send(x, size, MPI::DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM);
+  MPI_Send(x, size, MPI_DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM);
 }
 
 void CTQMC_WORLD::send_complexRaw2d (const int RECEIVER, ComplexType **x, int size1, int size2, CTQMC_TAG tag)
 {
   for (int i=0;i<size1;i++) 
    {
-      MPI_Send(x[i], size2, MPI::DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM);
+      MPI_Send(x[i], size2, MPI_DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM);
    }
 }
 
@@ -626,7 +634,7 @@ void CTQMC_WORLD::send_complexRaw3d (const int RECEIVER, ComplexType ***x, int s
   for (int i=0;i<size1;i++)
     for (int j=0;j<size2;j++)
    {
-      MPI_Send(x[i][j], size3, MPI::DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM);
+      MPI_Send(x[i][j], size3, MPI_DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM);
    }
 }
 
@@ -636,7 +644,7 @@ void CTQMC_WORLD::send_complexRaw4d (const int RECEIVER, ComplexType ****x, int 
     for (int j=0;j<size2;j++)
       for (int k=0;k<size3;k++)
    {
-      MPI_Send(x[i][j][k], size4, MPI::DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM);
+      MPI_Send(x[i][j][k], size4, MPI_DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM);
    }
 }
 
@@ -654,7 +662,7 @@ void CTQMC_WORLD::send (const int RECEIVER, ComplexType ****x, int size1, int si
 MPI_Request* CTQMC_WORLD::isend_complexRaw1d (const int RECEIVER, ComplexType *x, int size, CTQMC_TAG tag)
 {
   MPI_Request * REQ = new MPI_Request;
-  MPI_Isend(x, size, MPI::DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM,REQ);
+  MPI_Isend(x, size, MPI_DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM,REQ);
   return REQ;
 }
 
@@ -663,7 +671,7 @@ MPI_Request* CTQMC_WORLD::isend_complexRaw2d (const int RECEIVER, ComplexType **
   MPI_Request *REQ = new MPI_Request [size1];
   for (int i=0;i<size1;i++) 
    {
-      MPI_Isend(x[i], size2, MPI::DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM, &REQ[i]);
+      MPI_Isend(x[i], size2, MPI_DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM, &REQ[i]);
    }
   return REQ;
 }
@@ -675,7 +683,7 @@ MPI_Request* CTQMC_WORLD::isend_complexRaw3d (const int RECEIVER, ComplexType **
   for (int i=0;i<size1;i++)
     for (int j=0;j<size2;j++)
    {
-      MPI_Isend(x[i][j], size3, MPI::DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM, &REQ[count]);
+      MPI_Isend(x[i][j], size3, MPI_DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM, &REQ[count]);
       count++;
    }
   return REQ;
@@ -689,7 +697,7 @@ MPI_Request* CTQMC_WORLD::isend_complexRaw4d (const int RECEIVER, ComplexType **
     for (int j=0;j<size2;j++)
       for (int k=0;k<size3;k++)
    {
-      MPI_Isend(x[i][j][k], size4, MPI::DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM, &REQ[count]);
+      MPI_Isend(x[i][j][k], size4, MPI_DOUBLE_COMPLEX, RECEIVER, tag, CTQMC_COMM, &REQ[count]);
       count++;
    }
   return REQ;
@@ -709,7 +717,7 @@ MPI_Request* CTQMC_WORLD::isend (const int RECEIVER, ComplexType ****x, int size
 
 void CTQMC_WORLD::recv_complexRaw1d(const int SENDER, ComplexType* result, int size, CTQMC_TAG tag)
 {
-  MPI_Recv(result, size, MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+  MPI_Recv(result, size, MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
 }
 
 void CTQMC_WORLD::recv_complexRaw2d(const int SENDER, ComplexType** result, int size1, int size2, CTQMC_TAG tag)
@@ -717,7 +725,7 @@ void CTQMC_WORLD::recv_complexRaw2d(const int SENDER, ComplexType** result, int 
 
   for (int i=0;i<size1;i++)
     {
-       MPI_Recv(result[i], size2, MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+       MPI_Recv(result[i], size2, MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
     }
 
 }
@@ -727,7 +735,7 @@ void CTQMC_WORLD::recv_complexRaw3d(const int SENDER, ComplexType*** result, int
   for (int i=0;i<size1;i++)
     for (int j=0;j<size2;j++)
     {
-       MPI_Recv(result[i][j], size3, MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+       MPI_Recv(result[i][j], size3, MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
     }
 
 }
@@ -738,7 +746,7 @@ void CTQMC_WORLD::recv_complexRaw4d(const int SENDER, ComplexType**** result, in
     for (int j=0;j<size2;j++)
       for (int k=0;k<size3;k++)
     {
-       MPI_Recv(result[i][j][k], size4, MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
+       MPI_Recv(result[i][j][k], size4, MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &CT_STATUS);
     }
 
 }
@@ -756,7 +764,7 @@ void CTQMC_WORLD::recv(const int SENDER, ComplexType**** result, int size1, int 
 MPI_Request* CTQMC_WORLD::irecv_complexRaw1d(const int SENDER, ComplexType* result, int size, CTQMC_TAG tag)
 {
   MPI_Request *REQ = new MPI_Request;
-  MPI_Irecv(result, size, MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, REQ);
+  MPI_Irecv(result, size, MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, REQ);
   return REQ;
 }
 MPI_Request* CTQMC_WORLD::irecv_complexRaw2d(const int SENDER, ComplexType** result, int size1, int size2, CTQMC_TAG tag)
@@ -765,7 +773,7 @@ MPI_Request* CTQMC_WORLD::irecv_complexRaw2d(const int SENDER, ComplexType** res
   int count=0;
   for (int i=0;i<size1;i++)
     {
-       MPI_Irecv(result[i], size2, MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &REQ[count]);
+       MPI_Irecv(result[i], size2, MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &REQ[count]);
        count++;
     }
   return REQ;
@@ -780,7 +788,7 @@ MPI_Request* CTQMC_WORLD::irecv_complexRaw3d(const int SENDER, ComplexType*** re
   for (int i=0;i<size1;i++)
     for (int j=0;j<size2;j++)
     {
-       MPI_Irecv(result[i][j], size3, MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &REQ[count]);
+       MPI_Irecv(result[i][j], size3, MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &REQ[count]);
        count++;
     }
   return REQ;
@@ -794,7 +802,7 @@ MPI_Request* CTQMC_WORLD::irecv_complexRaw4d(const int SENDER, ComplexType**** r
     for (int j=0;j<size2;j++)
       for (int k=0;k<size3;k++)
     {
-       MPI_Irecv(result[i][j][k], size4, MPI::DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &REQ[count]);
+       MPI_Irecv(result[i][j][k], size4, MPI_DOUBLE_COMPLEX, SENDER, tag, CTQMC_COMM, &REQ[count]);
        count++;
     }
   return REQ;
@@ -818,6 +826,13 @@ void CTQMC_WORLD::wait (MPI_Request &REQ)
   MPI_Wait(&REQ,&CT_STATUS); 
 }
 
+void CTQMC_WORLD::waitall (MPI_Request* REQ, int size)
+{
+  MPI_Status *temp = new MPI_Status[size];
+  MPI_Waitall(size,REQ,temp);
+  delete[] temp;
+}
+
 int CTQMC_WORLD::test (MPI_Request &REQ)
 {
   int flag;
@@ -839,6 +854,15 @@ int CTQMC_WORLD::sync ()
   return MPI_Barrier(CTQMC_COMM); 
 }
 
+void CTQMC_WORLD::summReduce(void *sendbuffer, void *receivebuffer, int size, int root_process)
+{
+    MPI_Reduce(sendbuffer, receivebuffer, size, MPI_DOUBLE_COMPLEX, ComplexAdd, root_process, CTQMC_COMM);
+}
+
+void CTQMC_WORLD::genericReduce(void *sendbuffer, void *receivebuffer, int size, MPI_Datatype datatype, MPI_Op Operation, int root_process)
+{
+    MPI_Reduce(sendbuffer, receivebuffer, size, datatype, Operation, root_process, CTQMC_COMM);
+}
 
 /*-----------------------------------------------------------------------------------*/
 CTQMC_WORLD::~CTQMC_WORLD()

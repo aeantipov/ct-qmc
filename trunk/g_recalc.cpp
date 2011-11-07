@@ -214,7 +214,7 @@ Matrix & G0_inf_w(int z, n_type w)
 
 n_type Fermi_dist(n_type mu, n_type t)
 {
-	if (mu*(beta-t)>200.) return 0.;
+	if (mu*(beta-t)>200.) return 1e-14;
 	if (mu*t>200.) return exp(mu*(t-beta));
 	return 1./(exp(-mu*t)+exp(mu*(beta-t)));
 ;}

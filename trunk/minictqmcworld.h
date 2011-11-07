@@ -17,6 +17,10 @@
 #include <complex>
 #include <vector>
 #include "config.h"
+#include <string.h>
+
+/* Instruction for MPI to sum complex values */
+void CTQMC_MPI_COMPLEX_ADD ( ComplexType* invec, ComplexType *inoutvec, int *len, MPI_Datatype *dtype);
 
 /* TAGS FOR CORRESPONDING TYPES */
 
@@ -68,12 +72,14 @@ class CTQMC_WORLD {
  */
 
 ofstream rivers;  // Output stream
-MPI_Comm CTQMC_COMM; // Communicator for CT-QMC Processes
 int WORLD_SIZE; // Amount of processes we use
 MPI_Status CT_STATUS; // Status of receiving message
 char **river_names; // The output streams for each process
 
 public :
+MPI_Datatype CTQMCComplex;
+MPI_Comm CTQMC_COMM; // Communicator for CT-QMC Processes
+MPI_Op ComplexAdd; // A summation MPI Operation
 CTQMC_WORLD(){}; // Empty constructor 
 
 void INIT(int argc, char **argv, int N);
@@ -381,7 +387,7 @@ MPI_Request& isend(const int RECEIVER, ComplexType x, CTQMC_TAG tag = I_ComplexT
 /*-----------------------------------------------------------------------------------*/
 
 
-MPI_Request& irecv_VectorType(const int SENDER, VectorType& result, int &size, CTQMC_TAG tag = I_VectorType_SEND_TAG); 
+MPI_Request& irecv_VectorType(const int SENDER, VectorType& result, int size, CTQMC_TAG tag = I_VectorType_SEND_TAG); 
 MPI_Request& irecv_VectorType(const int SENDER, VectorType& result, CTQMC_TAG tag = I_VectorType_SEND_TAG);
 MPI_Request& irecv(const int SENDER, VectorType& result, CTQMC_TAG tag = I_VectorType_SEND_TAG);
 /*-----------------------------------------------------------------------------------*/
@@ -393,7 +399,7 @@ MPI_Request& irecv(const int SENDER, VectorType& result, CTQMC_TAG tag = I_Vecto
  */
 /*-----------------------------------------------------------------------------------*/
 
-MPI_Request& irecv_RealVectorType(const int SENDER, RealVectorType& result, int &size, CTQMC_TAG tag = I_RealVectorType_SEND_TAG); 
+MPI_Request& irecv_RealVectorType(const int SENDER, RealVectorType& result, int size, CTQMC_TAG tag = I_RealVectorType_SEND_TAG); 
 MPI_Request& irecv_RealVectorType(const int SENDER, RealVectorType& result, CTQMC_TAG tag = I_RealVectorType_SEND_TAG);
 MPI_Request& irecv(const int SENDER, RealVectorType& result, CTQMC_TAG tag = I_RealVectorType_SEND_TAG);
 /*-----------------------------------------------------------------------------------*/
@@ -405,7 +411,7 @@ MPI_Request& irecv(const int SENDER, RealVectorType& result, CTQMC_TAG tag = I_R
  */
 /*-----------------------------------------------------------------------------------*/
 
-MPI_Request& irecv_IntVectorType(const int SENDER, IntVectorType& result, int &size, CTQMC_TAG tag = I_IntVectorType_SEND_TAG); 
+MPI_Request& irecv_IntVectorType(const int SENDER, IntVectorType& result, int size, CTQMC_TAG tag = I_IntVectorType_SEND_TAG); 
 MPI_Request& irecv_IntVectorType(const int SENDER, IntVectorType& result, CTQMC_TAG tag = I_IntVectorType_SEND_TAG);
 MPI_Request& irecv(const int SENDER, IntVectorType& result, CTQMC_TAG tag = I_IntVectorType_SEND_TAG);
 /*-----------------------------------------------------------------------------------*/
@@ -516,9 +522,13 @@ MPI_Request* irecv(const int SENDER, ComplexType**** result, int size1, int size
 /*-----------------------------------------------------------------------------------*/
 
 void wait(MPI_Request &REQ);
+void waitall(MPI_Request *REQ, int size);
 int test(MPI_Request &REQ);
 int testall(MPI_Request *REQ, int size);
 int sync();
+void summReduce(void *sendbuffer, void *receivebuffer, int size, int root_process);
+void genericReduce(void *sendbuffer, void *receivebuffer, int size, MPI_Datatype datatype, MPI_Op Operation, int root_process);
+
 /*-----------------------------------------------------------------------------------*/
 /**
   Blocking and non-blocking test procedures for non-blocking sending/receiving raw data

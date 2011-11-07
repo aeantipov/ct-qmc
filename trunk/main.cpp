@@ -30,6 +30,9 @@ int WL_flag=int_value("use_Wang_Landau"), WL_max;
 n_type WL_factor, WL_weight[N_max]; ifstream WL_stream("WL.dat"); ofstream WL_out("WL1.dat");
 			//defined in ini and remains unchanged so far...
 
+std::vector<ComplexType> dataGM00(n_zone*wn_max*n_part,0);
+std::vector<ComplexType> dataGtotal(n_zone*wn_max*n_part*n_part,0);
+
 ComplexType ** GM00_st[n_zone]; ComplexType *** Gtotal_st [n_zone];//[WN_max][n_part];
 
 n_type sgn_sum=0, weight_sum=0, weight_sum2=0, Nc_sum=0, DispG0_sum=0;
