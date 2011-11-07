@@ -1,4 +1,5 @@
  //================= separate subroutines for 4-point correlators =======================
+//int const nzone2=1;
 ComplexType **** GMchi_matrix[n_zone];
 void set_GMchi();
 void ini_GMchi();
@@ -105,7 +106,9 @@ void chi(int write_flag=0)
 
 // =======================   calcultaion procedure ==================
 count++; if (count%(n_part*wn_max*(1+31*todo6))!=0) return;   //to mantain N^2 ComplexTypeity for chi4...
+if (isnan(curr_sgn/prev_weight)) return;
 set_GMchi();
+if(isnan(curr_sgn/prev_weight)) return;
 s+=curr_sgn/prev_weight;
 
 

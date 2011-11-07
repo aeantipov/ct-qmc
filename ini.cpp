@@ -36,11 +36,12 @@ void Ini()
    {
       	GM_matrix[z][w]=new ComplexType *[n_part];
          Gtotal_st[z][w]=new ComplexType *[n_part];
-         GM00_st[z][w]=new ComplexType [n_part];
+         GM00_st[z][w]=&dataGM00[z*wn_max*n_part + w*n_part];
          for (int n1=0; n1<n_part; n1++)
          {
          	GM_matrix[z][w][n1]=new ComplexType [n_part];
-            Gtotal_st[z][w][n1]=new ComplexType [n_part];
+            Gtotal_st[z][w][n1]=&dataGtotal[z*wn_max*n_part*n_part + w*n_part*n_part + n1*n_part];
+            for (int n2=0; n2<n_part; n2++) 
          ;}
    ;}
 

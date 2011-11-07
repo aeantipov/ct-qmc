@@ -27,8 +27,9 @@ n_type weight()
 
    for (int z=0; z<n_zone; z++)
    for (int j=0; j<n_part; j++)
+   for (int j2=0; j2<n_part; j2++)
    {
-   	ComplexType y=GM_matrix[z][0][j][j]-g0[z][j];//GM00[z][w][j]-g0[z][w][j];
+   	ComplexType y=GM_matrix[z][0][j][j2]; if (j==j2) y-=g0[z][j];//GM00[z][w][j]-g0[z][w][j];
    	x+=sqr(real(y))+sqr(imag(y));
    ;}
 
@@ -70,7 +71,9 @@ if (NN!=0 && RR==0)
 
 void update_statistics()
 {
-GLOBAL_MC_COUNT++; hist[N_WL]++;
+if (isnan(curr_sgn/prev_weight)){cout<<"!";return;}
+	
+	GLOBAL_MC_COUNT++; hist[N_WL]++;
 WL_weight[N_WL]+=WL_factor;
 
 for (int z=0; z<n_zone; z++)

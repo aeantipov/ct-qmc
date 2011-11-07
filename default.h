@@ -214,7 +214,7 @@ default_dict::default_dict()
    //===================================================================================//
 
   current.name="output_period";
-  current.value="3000";
+  current.value="100000";
   /*
    * How often results are written to the files, MC trials
    */

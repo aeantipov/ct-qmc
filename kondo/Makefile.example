@@ -5,11 +5,13 @@
 CPP= g++ 
 MPICPP = mpic++ 
 QMCDIR=..
+COMPCC  = gcc -g -Wall -O3
 
-PART= 1
+
+PART=1
 #This flag determines how many particles are to include in QMC calc. Affects the size of all matrices and henceworth its increasing leads to substantial growing of computation time
 
-ZONE= 2
+ZONE=4
 #This flag determines how many zones are to include in QMC calc. A zone differs from an orbital by a definition that all non-diagonal correlators are equal to 0
 
 MPI = -Duse_mpi
@@ -20,9 +22,13 @@ ZONEFLAG= -Dzone${ZONE}
 CFLAGS = $(PARTFLAG) $(ZONEFLAG) -I${QMCDIR}
 CXXFLAGS = ${CFLAGS} -O3 -Wno-non-template-friend -Wno-write-strings
 
-BINNAME=ct-qmc
+BINNAME=ct-qmc-ising
 
 default: ct-qmc-mpi
+
+.c:
+	$(COMPCC) $< $(INCFLAG) $(XLIBS) -Wall -lm -o $@
+
 
 minictqmcworld.o : ${QMCDIR}/minictqmcworld.cpp ${QMCDIR}/minictqmcworld.h
 	$(MPICPP) $(CXXFLAGS) $(INCLUDE) -c ${QMCDIR}/minictqmcworld.cpp 

@@ -278,7 +278,7 @@ int cluster_walks()
    	ww[i]=cluster_factor();
       n_type clw=cluster_weight();
       ww[i]*=fabs(clw);
-
+if (isnan(ww[i])) ww[i]=0;
       norm+=ww[i];
       {for (int k=0; k<cluster_size; k++) {states[k][i]=cluster_state[k];}}
 

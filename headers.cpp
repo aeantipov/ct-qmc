@@ -2,6 +2,7 @@
 #include "input.cpp"
 
 
+using std::isnan;
 
 int const N_max=5000;   //maximal perturbation order
 
