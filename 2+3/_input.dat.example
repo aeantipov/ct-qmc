@@ -1,36 +1,44 @@
+$U$
+5
+
+$J$
+0.00001
+
 $beta$
 20
 
-$U$
-2.0
-
-$J$
-0.5
-
-$desired_accuracy$
--1
-
-$maximum_MC_steps$
-30000000
-
-$read_delta$
-2
-
 $density_density$
 1
-flag determines, whether just density-density calculations are done
 
-$use_Wang_Landau$
-0
+$desired_accuracy$
+0.0001
+
+$maximum_MC_steps$
+1000000
 
 $Use_Global_moves$
 1
 
-$W_group_generators$
+$use_Wang_Landau$
 0
-Program works correctly with Use_Global_moves=1 and W_group_generators=0 only if the
-interaction is spin-indepent. Bee careful!
-
 
 $Enable_cluster_updates$
-1
+0
+
+$number_of_Matsubara_frequencies$
+100
+
+$mu$
+0.0
+
+$read_delta$
+2
+
+$W_group_generators$
+0
+
+$alpha_offdiagonal$
+-0.15
+
+$output_period$
+2000

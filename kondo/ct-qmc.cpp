@@ -1,3 +1,4 @@
+//Implementation of s-d model/Kondo Lattice model Hamiltonian as used in Master's thesis by Jonas Sweep (jonas*sweep_[at]gmail.com, non-bots, please omit the underscore and asterisk), April 2012.
 #ifdef orb1
 #define n_part_ 1
 #elif defined orb2
@@ -59,8 +60,7 @@ Matrix & g0w(int z, int wn)
    return Hw;
 ;}
 
-#ifdef zone4
-
+#ifdef zone2
 void W(point & r1, point_ & r1_, point & r2, point_ & r2_, n_type &u, n_type & a1, n_type &a2)
 //"perturbation generator"
 //generates time points and zone numbers, so that U=\bar{u}
@@ -74,31 +74,39 @@ int i=0;
 
 
 //int n_terms=density_density?3:5;
-int n_terms=3;
+int n_terms=4;
 int n_sum=2;
 int term=rnd(n_terms);
 
 if (term==0)
 {
-   r1.i=i; r1_.i=i; r2.i=i; r2_.i=i;
-   int z=rnd(n_sum);
-   r1.z=2+z; r1_.z=2+z; r2.z=3-z; r2_.z=3-z;   
-   u=n_terms*beta*n_sum*(U/2); //Hubbard U for localized electrons
+   int p=rnd(n_part);
+   r1.i=p; r1_.i=p; r2.i=1-p; r2_.i=1-p;
+   r1.z=1; r1_.z=1; r2.z=1; r2_.z=1;   
+   u=n_terms*beta*n_sum*(U/2); //Hubbard U for localized electrons: localized=zone1, conduction=zone0
 ;}
 if (term==1) // s_zs_z (nn1/2)
 {
-   r1.i=i; r1_.i=i; r2.i=i; r2_.i=i;
-   int z=rnd(n_sum);
-   r1.z=2+z; r1_.z=2+z; r2.z=z; r2_.z=z;   
+   int p=rnd(n_part);
+   r1.i=p; r1_.i=p; r2.i=p; r2_.i=p;
+   r1.z=1; r1_.z=1; r2.z=0; r2_.z=0;   
    u=n_terms*n_sum*beta*(J/4);	//C?????
 ;}
 if (term==2) //nn(2/2)
 {
-   r1.i=i; r1_.i=i; r2.i=i; r2_.i=i;
-   int z=rnd(n_sum);
-   r1.z=2+z; r1_.z=2+z; r2.z=1-z; r2_.z=1-z;   
-   u=-1.0*n_terms*beta*(J/4);
+   int p=rnd(n_part);
+   r1.i=p; r1_.i=p; r2.i=1-p; r2_.i=1-p;
+   r1.z=1; r1_.z=1; r2.z=0; r2_.z=0;   
+   u=-1.0*n_sum*n_terms*beta*(J/4);
 ;}
+if (term==3) //sx and sy term 1 and 2
+{
+   int p=rnd(n_part);
+   r1.i=p; r1_.i=1-p; r2.i=1-p; r2_.i=p;
+   r1.z=1; r1_.z=1; r2.z=0; r2_.z=0;   
+   u=n_terms*beta*n_sum*(J/2);
+;}
+
 define_alpha(r1,r1_,r2,r2_,u,a1,a2);//alpha's are defined by a standard recipe
    
 ;}

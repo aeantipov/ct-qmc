@@ -129,6 +129,7 @@ int main ()
 
 for (int i=0; i<i_max; i++)
 {
+    if (!(i%output_period)) cout << i << " steps done." << endl;
  	steps();
 
  	chi(); update_nn();
@@ -174,6 +175,8 @@ if ( (i%output_period==0 && i!=0 && curr_t!=time(NULL)/output_period_time) || (i
                ;}
                ou_gg<<"\n"; ou_total<<"\n";
                ;}         
+               ou_gg.close();
+               ou_total.close();
 
                Gt_write();
 

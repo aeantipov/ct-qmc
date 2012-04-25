@@ -4,7 +4,7 @@
 
 using std::isnan;
 
-int const N_max=5000;   //maximal perturbation order
+int const N_max=3000;   //maximal perturbation order
 
 int main_argc;  char * main_argv[256];
 
@@ -55,6 +55,7 @@ int wn_max=int_value("number_of_Matsubara_frequencies");
 
 int VectorDimension=n_part;
 #include "math_lib.cpp"
+#include "Matrix.h"
    	   //matrix manipulations, splines, random generator etc...
          //this file must be included exactly at this place, because it uses
          //the value of n_part

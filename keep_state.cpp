@@ -26,7 +26,7 @@ void keep_state_all(int f, int keep_ewt=1) //f==0 => keep, f==1 => recover
 	   {
    		NumberOfPoints0[z]=0;
    		M0[z]=new n_type * [N_max];
-      	for (int j=0; j<N_max/3; j++)
+      	for (int j=0; j<N_max/3; j++) //Why?
       		M0[z][j]=new n_type [N_max];
 
    	GM_matrix0[z]=new ComplexType **[wn_max];

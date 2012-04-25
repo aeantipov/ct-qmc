@@ -12,6 +12,8 @@
 #define _CONFIG_H
 
 #include <vector>
+#include <complex>
+#include <iostream>
 
 /** Real floating point type. */
 typedef double n_type;

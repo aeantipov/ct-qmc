@@ -8,10 +8,10 @@ void Ini()
 {
 
 #ifdef use_mpi
-    CTQMC.getStream()<<"\n       This is CT-QMC code version 1.6\n       Check www.ct-qmc.org for latest updates.\n";
+    CTQMC.getStream()<<"\n       This is CT-QMC code version 1.6.2\n       Check www.ct-qmc.org for latest updates.\n";
     CTQMC.getStream()<<"\n       Using MPI Version.\n";
 #else 
-    cout<<"\n       This is CT-QMC code version 1.6\n       Check www.ct-qmc.org for latest updates.\n";
+    cout<<"\n       This is CT-QMC code version 1.6.2\n       Check www.ct-qmc.org for latest updates.\n";
     cout<<"\n       Using single-processor version.\n";
 #endif
 
