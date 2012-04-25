@@ -1,20 +1,20 @@
-DMFT++ solver for Hubbard-like models
+DMFT++ solver for Hubbard-like models, as used in Master's thesis of Jonas Sweep, April 2012.
 
 $use_minimum_MC_steps$
 1
 
 $minimum_MC_steps$
-15000
+1500
 
 $maximum_MC_steps$
-15000000
+80000000
 
 $U$
-0.0001
+5.0
 Coulomb repulsion
 
 $beta$
-1
+10.0
 inverse temperature
 
 $mu$
@@ -25,41 +25,24 @@ $read_delta$
 2
 
 $desired_accuracy$
-0.0005
+0.000
 desired errorbar in G(\tau)
 
 $calculate_Gamma4$
 0
 
-$calculate_Gamma6$
-0
-
-$backup_Gamma4$
-0
-whether to make backup copies of the vertices for convergence checks CAUTION: produces large amounts of data!
-
-$Gamma4_backup_period$
-5000000
-
-$backup_Gamma6$
-0
-whether to make backup copies of the vertices for convergence checks CAUTION: produces large amounts of data!
-
-$Gamma6_backup_period$
-5000000
-
 $number_of_Matsubara_frequencies$
 100
 
 $number_of_Matsubara_frequencies_for_Gamma4$
-70
+34
 must be an even number
 
 $output_period$
-100000
+20000
 
 $output_period_time$
-120
+60
 
 $measure_tau_correlators$
 0
@@ -70,11 +53,13 @@ $use_Wang_Landau$
 0 
 
 $Use_Global_moves$
-1
+0
 
 $Enable_cluster_updates$
-1
+0
 
+$alpha_offdiagonal$
+0.15
 
 $number_of_kpoints_x$
 24
@@ -108,12 +93,13 @@ $zeta$
 mixing parameter for mu/AlphaSum update
 
 $ksi$
-1.0
+0.87
 mixing parameter for Delta update
 
 $ksiG$
-0.5
-mixing paramater for Gd update; specifies how much of !Gd_old! should be assigned, i.e. ksiG=0 corresponds to fully assigning Gd_new
+0.9
+mixing paramater for Gd update; specifies how much of !Gd_old! should be assigned, 
+i.e. ksiG=0 corresponds to fully assigning Gd_new
 
 $t$
 0.25
@@ -137,9 +123,13 @@ $DMFT_sigma$
 Added by "change"
 
 $J$
-4.
+0.6
 Added by "change"
 
 $change$
-J
+t
+Added by "change"
+
+$../change$
+maximum_MC_steps
 Added by "change"

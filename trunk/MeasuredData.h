@@ -20,11 +20,14 @@ struct MeasuredData
     std::vector<n_type> dataGM00_imag; //n_zone*wn_max*n_part);//,0);
     std::vector<n_type> dataGtotal_real;// (n_zone*wn_max*n_part*n_part,0);
     std::vector<n_type> dataGtotal_imag;// (n_zone*wn_max*n_part*n_part,0);
+    std::vector<n_type> dataGamma4_real;// (n_zone*wn_max*n_part*n_part,0);
+    std::vector<n_type> dataGamma4_imag;// (n_zone*wn_max*n_part*n_part,0);
     n_type weight_sum;
     
     MeasuredData();
 
     void setFromComplexData(std::vector<ComplexType> &inGM00, std::vector<ComplexType> &inGtotal);
+    void setGamma(std::vector<ComplexType> &inGamma);
     
     std::string& serializeGM00();
     std::string& serializeGtotal();

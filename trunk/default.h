@@ -277,8 +277,18 @@ default_dict::default_dict()
   current.name="W_group_generators";
   current.value="0";
   /*
-   * Program works correctly with Use_Global_moves=1 and W_group_generators=0 only if the
-   * interaction is spin-indepent. Be careful!
+   * This is a total number of irreducible group representations in the hamiltonian of the coulomb interaction. 
+   * In case of all 'n_zone' zones being equivalent leave this number as zero.
+   * Otherwise the first number represents total number of symmetry considerations, the following n_zone*first number digits, 
+   * separated by space, represent a permutation which commutes with an interactive hamiltonian.
+   * Examples:
+   * - For a 2+3 code in the corresponding directory one can compile it with a n_part=1, n_zone=4, which gives a density-density interaction.
+   *   In this case the first two zones are allocated for one spin directions, the second two - for the opposing one.
+   *   The following line should be provided here: '1  1 0 3 2', which means a permutation 0->1, 1->0, 2->3, 3->2 leaves the Hamiltonian untouched.
+   * - For the same 2+3 code in a three orbital case being compiled with n_part=1, n_zone=6, the situtation is the same, 
+   *   though now first three digits correspond to one spin direction, second three - for the opposing.
+   *   The corresponding value for W_group_generators is '2  3 4 5 0 1 2  2 0 1 5 3 4'. 
+   * Warning. Assuming too strong symmetry such as with 'W_group_generators' will lead to wrong results. Be careful!
   */
    dict.push_back(current);
    //===================================================================================//

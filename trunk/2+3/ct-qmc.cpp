@@ -34,10 +34,6 @@ int const n_part=n_part_;
 			//standard headers are included
 			//some starting things are declared
 
-
-
-
-
 //================ Action ========================
 
 n_type U=value("U"), J=value("J"), beta=value("beta");
@@ -55,6 +51,7 @@ Matrix & g0w(int z, int wn)
    Hw=mu+I*w;
    Hw=Hw-Delta[z][wn];// static int f=0; //if (f<50) {cout<<w<<"  "<<Hw.x[0][0]-I*w<<"\n";f++;}
    //cout << "z : " << z << " wn : " << wn << "Delta[z][wn]  " << Delta[z][wn].x[0][0] << endl;
+
    Inverse(Hw);
    return Hw;
 ;}
@@ -66,124 +63,108 @@ void W(point & r1, point_ & r1_, point & r2, point_ & r2_, n_type &u, n_type & a
 //generates time points and zone numbers, so that U=\bar{u}
 {
 double tau=beta*rnd();  
-r1.t=tau; r1_.t=tau; r2.t=tau; r2_.t=tau;
+r1.t=tau; r1_.t=tau; r2.t=tau; r2_.t=tau; 
   
 int i=rnd(n_part);
 int j=rnd(n_part);
 while (j==i) j=rnd(n_part);
-n_type C=n_part;
+int z=rnd(2);
 
 int n_terms=density_density?3:5;
 
 
 int term=rnd(n_terms);
 
-if (term==0)
+switch(term){
+case 0:
 {
    r1.i=i; r1_.i=i; r2.i=i; r2_.i=i;
-   int z=rnd(2);
    r1.z=z; r1_.z=z; r2.z=1-z; r2_.z=1-z;   
-   u=n_terms*beta*U*C;
-;}
-if (term==1) // nn
+   u=n_terms*beta*U*n_part;
+   break;
+};
+case 1:
 {
    r1.i=i; r1_.i=i; r2.i=j; r2_.i=j;
-   int z=rnd(2);
    r1.z=z; r1_.z=z; r2.z=1-z; r2_.z=1-z;   
-   u=n_terms*beta*(U-2*J)*C*(C-1);
+   u=n_terms*beta*(U-2*J)*n_part*(n_part-1);
+   break;
 ;}
-if (term==2) //nn
+case 2:
 {
    r1.i=i; r1_.i=i; r2.i=j; r2_.i=j;
-   int z=rnd(2);
    r1.z=z; r1_.z=z; r2.z=z; r2_.z=z;   
-   u=n_terms*beta*(U-3*J)*C*(C-1);
+   u=n_terms*beta*(U-3*J)*n_part*(n_part-1);
+   break;
 ;}
-if (term==3) //pair hopping
+case 3:
 {
    r1.i=i; r1_.i=j; r2.i=j; r2_.i=i;
-   int z=rnd(2);
    r1.z=z; r1_.z=z; r2.z=1-z; r2_.z=1-z;   
-   u=n_terms*beta*J*C*(C-1);
+   u=n_terms*beta*J*n_part*(n_part-1);
+   break;
 ;}
-if (term==4) //pair hopping
+case 4:
 {
    r1.i=j; r1_.i=i; r2.i=j; r2_.i=i;
-   int z=rnd(2);
    r1.z=z; r1_.z=z; r2.z=1-z; r2_.z=1-z;   
-   u=n_terms*beta*J*C*(C-1);
+   u=n_terms*beta*J*n_part*(n_part-1);
+   break;
 ;}
+};
 
  define_alpha(r1,r1_,r2,r2_,u,a1,a2);//alpha's are defined by a standard recipe
    
 ;}
 
-#elif defined zone6
-#ifdef orb1
+#elif orb1
 void W(point & r1, point_ & r1_, point & r2, point_ & r2_, n_type &u, n_type & a1, n_type &a2)
 //"perturbation generator"
 //generates time points and zone numbers, so that U=\bar{u}
 {
 double tau=beta*rnd();  
-r1.t=tau; r1_.t=tau; r2.t=tau; r2_.t=tau;
+r1.t=tau; r1_.t=tau; r2.t=tau; r2_.t=tau; 
 r1.i=0; r1_.i=0; r2.i=0; r2_.i=0;
 
-int i=rnd(n_zone/2);
-int j=rnd(n_zone/2);
-while (j==i) j=rnd(n_zone/2);
+static int zonesize = n_zone/2;
+int i=rnd(zonesize);
+int j=rnd(zonesize);
+while (j==i) j=rnd(zonesize);
+int z=rnd(2);
 
 int n_terms=3;
-int term=rnd(n_terms);
-n_type C=n_zone/2;
 
-switch (term)
-	{
-	case 0 : // nn
-		{
-//		   r1.i=i; r1_.i=i; r2.i=i; r2_.i=i;
-		   int z=rnd(2);
-		   r1.z=2*i+z; r1_.z=2*i+z; r2.z=2*i+1-z; r2_.z=2*i+1-z;   
-		   u=n_terms*beta*U*C;
-		   break;
-		;}
-		
-	case 1 : // nn
-		{
-//		   r1.i=i; r1_.i=i; r2.i=j; r2_.i=j;
-		   int z=rnd(2);
-		   r1.z=2*i+z; r1_.z=2*i+z; r2.z=2*j+1-z; r2_.z=2*j+1-z;   
-		   u=n_terms*beta*(U-2*J)*C*(C-1);
-		   break;
-		;}
-	case 2 : //nn
-		{
-//		   r1.i=i; r1_.i=i; r2.i=j; r2_.i=j;
-		   int z=rnd(2);
-		   r1.z=2*i+z; r1_.z=2*i+z; r2.z=2*j+z; r2_.z=2*j+z;   
-		   u=n_terms*beta*(U-3*J)*C*(C-1);
-		   break;
-		;}
-/*	case 3 : //pair hopping 1
-		{
-//		   r1.i=i; r1_.i=j; r2.i=j; r2_.i=i;
-		   int z=rnd(2);
-		   r1.z=2*i+z; r1_.z=2*j+z; r2.z=2*j+1-z; r2_.z=2*i+1-z;   
-		   u=-n_terms*beta*J*C*(C-1);
-		   break;
-		;}
-	case 4 : //pair hopping 2
-		{
-//		   r1.i=j; r1_.i=i; r2.i=j; r2_.i=i;
-		   int z=rnd(2);
-		   r1.z=2*j+z; r1_.z=2*i+z; r2.z=2*j+1-z; r2_.z=2*i+1-z;   
-		   u=-n_terms*beta*J*C*(C-1);
-		   break;
-		;}*/
-	}
- define_alpha(r1,r1_,r2,r2_,u,a1,a2);//alpha's are defined by a standard recipe
+int term=rnd(n_terms);
+
+switch(term){
+case 0:
+{
+   //r1.i=i; r1_.i=i; r2.i=i; r2_.i=i;
+   r1.z=i+z*zonesize; r1_.z=i+z*zonesize; r2.z=i+(1-z)*zonesize; r2_.z=i+(1-z)*zonesize;  
+   u=n_terms*beta*U*zonesize;
+   break;
+};
+case 1:
+{
+   //r1.i=i; r1_.i=i; r2.i=j; r2_.i=j;
+   r1.z=i+z*zonesize; r1_.z=i+z*zonesize; r2.z=j+(1-z)*zonesize; r2_.z=j+(1-z)*zonesize;   
+   u=n_terms*beta*(U-2*J)*zonesize*(zonesize-1);
+   break;
+;}
+case 2:
+{
+   //r1.i=i; r1_.i=i; r2.i=j; r2_.i=j;
+   r1.z=i+z*zonesize; r1_.z=i+z*zonesize; r2.z=j+z*zonesize; r2_.z=j+z*zonesize;   
+   u=n_terms*beta*(U-3*J)*zonesize*(zonesize-1);
+   break;
+;}
+};
+
+define_alpha(r1,r1_,r2,r2_,u,a1,a2);//alpha's are defined by a standard recipe
    
 ;}
-#endif
+
+
 #endif
 
 #ifdef use_mpi

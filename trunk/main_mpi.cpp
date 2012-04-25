@@ -36,6 +36,7 @@ n_type WL_factor, WL_weight[N_max]; ifstream WL_stream("WL.dat"); ofstream WL_ou
 
 std::vector<ComplexType> dataGM00(n_zone*wn_max*n_part,0);
 std::vector<ComplexType> dataGtotal(n_zone*wn_max*n_part*n_part,0);
+std::vector<ComplexType> dataChi4;
 
 
 ComplexType *** GM00_st = new ComplexType ** [n_zone]; 
@@ -106,62 +107,6 @@ void steps()
 			//Initialisation; memory for dynamical arrays; pre-sets of variables
 			//and a number of initial MC steps ...
 
-void gw_gtotal_weight_backup(ComplexType ****Gtotal_from, ComplexType ***Gw_from, n_type weight_from, ComplexType ****Gtotal_to, ComplexType ***Gw_to, n_type& weight_to)
-/* Performs a backup from received data to container */
-{
-   weight_to = weight_from;
-   for (int z=0; z<n_zone; z++)
-   for (int wn=0; wn<wn_max; wn++)
-   for (int j=0; j<n_part; j++)
-   {
-     Gw_to[z][wn][j]=Gw_from[z][wn][j];
-     for (int j2=0; j2<n_part; j2++)
-	  {
-	    Gtotal_to[z][wn][j][j2]=Gtotal_from[z][wn][j][j2];
-	  }
-  ;}
-}
-
-void Gw_write(ComplexType *****Gtotal_, ComplexType ****Gw_, n_type *weight_)
-/* Prints Gw.dat and Gw_complete.dat from Gw and Gtotal backup containers */
-{
-    ofstream ou_gg("Gw.dat"), ou_total("Gw_complete.dat");
-    /* calculate total weight */
-    double sumweight = 0.;
-    for (int i=1; i<CTQMC.getSize();i++) sumweight+=weight_[i-1];
-
-    /* Sum everything */
-    for (int i=1; i<CTQMC.getSize();i++)
-    for (int z=0; z<n_zone; z++)
-    for (int wn=0; wn<wn_max; wn++)
-    for (int j=0; j<n_part; j++)
-      {if (i==1) GM00_st[z][wn][j]=Gw_[i-1][z][wn][j]/sumweight;
-       else      GM00_st[z][wn][j]+=Gw_[i-1][z][wn][j]/sumweight;
-       for (int j2=0; j2<n_part; j2++)
-       {
-         if (i==1) Gtotal_st[z][wn][j][j2]=Gtotal_[i-1][z][wn][j][j2]/sumweight;
-         else      Gtotal_st[z][wn][j][j2]+=Gtotal_[i-1][z][wn][j][j2]/sumweight;
-       }
-      };
-
-  //    cout << "Total weight: " << sumweight << endl;
-
-     /*Print output*/
-      for (int wn=0; wn<wn_max; wn++)
-      {
-      ou_gg<<wn<<"  ";  ou_total<<wn<<"  ";
-      for (int z=0; z<n_zone; z++)
-      for (int j=0; j<n_part; j++)
-      {
-        ou_gg<<double(real(GM00_st[z][wn][j]))<<"  "<<double(imag(GM00_st[z][wn][j]))<<"   ";
-        for (int j2=0; j2<n_part; j2++) ou_total<<double(real(Gtotal_st[z][wn][j][j2]))<<"  "<<double(imag(Gtotal_st[z][wn][j][j2]))<<"   ";
-      ;}
-      ou_gg<<"\n"; ou_total<<"\n";
-      ;}         
-      ou_gg.close();
-      ou_total.close();
-}
-
 void print_logo()
 {   
    int WorkersAmount = CTQMC.getSize()-1; // optimization
@@ -192,7 +137,7 @@ for (int i=0; i<N_autocorr; i++) {autocorr[i]=0;autocorr_aux[i]=0;autocorr_s[i]=
 CTQMC.sync();
 for (int i=0; i<i_max; i++){
     /* Print amount of steps done */
-    if (!(i%100000)) cout << "Walker " << CTQMC.getRank() << " : " << i << " steps done." << endl;
+    if (!(i%output_period)) cout << "Walker " << CTQMC.getRank() << " : " << i << " steps done." << endl;
     /* Do the actual steps */
     steps();
     chi(); update_nn();
@@ -321,6 +266,11 @@ int main (int argc, char **argv)
 	try{
     	Ini();
 	    CTQMC.getStream() << "Walker " << my_rank << " initialized memory." << endl;
+        if (int_value("calculate_Gamma4")) 
+            { 
+                int wc_max=int_value("number_of_Matsubara_frequencies_for_Gamma4");
+                dataChi4.assign(n_zone*n_zone*wc_max*wc_max*2*wc_max*n_part*n_part*n_part*n_part,0.0); // [z1][z2][w1][w2_][W][n1][n1_][n2][n2_]
+            }
 	    cout << "Walker " << my_rank << " initialized memory." << endl;
 	   }
 	catch (std::bad_alloc&)
